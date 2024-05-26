@@ -1,0 +1,46 @@
+### obtener todos los characters
+GET http://localhost:3000/api/clients
+
+
+### obtener un character
+GET http://localhost:3000/api/clients/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+
+### crear un nuevo character
+POST http://localhost:3000/api/clients
+Content-Type: application/json
+
+{
+  "name": "Ricardo",
+  "surname": "Fort",
+  "dni": 45656800,
+  "mail": "richardFortMiami@gmail.com",
+  "phoneNumbre": 3415665866,
+}
+
+
+### modificar un character (PUT - recurso completo e idempotente)
+PUT http://localhost:3000/api/clients/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+Content-Type: application/json
+
+{
+"name": "Javier",
+  "surname": "Milei",
+  "dni": 45656400,
+  "mail": "JGM2024@gmail.com",
+  "phoneNumbre": 3415699866,
+}
+
+
+### modificar un character (PATCH - recurso parcial)
+PATCH http://localhost:3000/api/clients/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+Content-Type: application/json
+
+{
+
+"surname": "Fort",
+  "dni": 45656800,
+  "mail": "richardFortMiami@gmail.com" 
+}
+
+### borrar un character
+DELETE http://localhost:3000/api/clients/a02b91bc-3769-4221-beb1-d7a3aeba7dad
