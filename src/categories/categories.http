@@ -1,0 +1,39 @@
+### obtener todos los characters
+GET http://localhost:3000/api/categories
+
+
+### obtener un character
+GET http://localhost:3000/api/categories/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+
+### crear un nuevo character
+POST http://localhost:3000/api/categories
+Content-Type: application/json
+
+{
+  "name": "Camisetas",
+  "Description": "Aqui encontraras las mejores camisetas de la mejor calidad",
+}
+
+
+### modificar un character (PUT - recurso completo e idempotente)
+PUT http://localhost:3000/api/categories/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+Content-Type: application/json
+
+{
+"name": "Pantalones",
+"description": "Explora nuestra amplia selección de pantalones que combinan estilo y comodidad para cualquier ocasión.",
+}
+
+
+### modificar un character (PATCH - recurso parcial)
+PATCH http://localhost:3000/api/categories/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+Content-Type: application/json
+
+{
+
+"surname": "Pantalones",
+"description": "Explora nuestra amplia selección de pantalones que combinan estilo y comodidad para cualquier ocasión.",
+}
+
+### borrar un character
+DELETE http://localhost:3000/api/categories/a02b91bc-3769-4221-beb1-d7a3aeba7dad
