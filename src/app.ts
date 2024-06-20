@@ -1,5 +1,8 @@
 import express from 'express'
 import { productRouter } from './products/product.routes.js'
+import { brandRouter } from './brand/brand.routes.js'
+import { categoryRouter } from './categories/category.routes.js'
+import { clientRouter } from './clients/client.routes.js'
 
 const app = express()
 app.use(express.json())

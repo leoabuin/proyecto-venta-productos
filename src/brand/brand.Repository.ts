@@ -3,7 +3,7 @@ import { Brand } from "./brand.entify.js";
 
 const brands = [
     new Brand(
-      'Martin',
+      'Nike',
       'Goméz',
       'a02b91bc-3769-4221-beb1-d7a3aeba7dad' /* esto se deberia cambiar?*/
     ),
