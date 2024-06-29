@@ -1,0 +1,41 @@
+### obtener todos los characters
+GET http://localhost:3000/api/distributors
+
+
+### obtener un character
+GET http://localhost:3000/api/distributors/20-458450-45
+
+### crear un nuevo character
+POST http://localhost:3000/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": "20-458450-45",
+  "mail": "boby@gmail.com"
+}
+
+
+### modificar un character (PUT - recurso completo e idempotente)
+PUT http://localhost:3000/api/distributors/20-458450-45
+Content-Type: application/json
+
+{
+"CUIL": "20-458450-45",
+"mail": "chapubraña@hotmail.com",
+"tel":"154826452",
+"adress": "1 y 57"
+}
+
+
+### modificar un character (PATCH - recurso parcial)
+PATCH http://localhost:3000/api/distributors/20-458450-45
+Content-Type: application/json
+
+{
+
+"tel":"99999999"
+
+}
+
+### borrar un character
+DELETE http://localhost:3000/api/distributors/20-458450-45
