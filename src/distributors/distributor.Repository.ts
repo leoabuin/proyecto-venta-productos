@@ -1,3 +1,4 @@
+/*
 import { Repository } from "../shared/repository.js";
 import { Distributor } from "./distributor.entify.js";
 
@@ -50,3 +51,4 @@ export class DistributorRepository implements Repository<Distributor>{
       }
 
 } 
+      */

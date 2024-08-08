@@ -1,15 +1,17 @@
+
+/*
 import { Repository } from "../shared/repository.js";
 import { Category } from "./category.entify.js";
 
 const categories = [
     new Category(
       'Martin', /*name*/
-      'Goméz', /*description*/
-      'a02b91bc-3769-4221-beb1-d7a3aeba7dad' /* esto se deberia cambiar?*/
-    ),
-  ]
+      //'Goméz', /*description*/
+      //'a02b91bc-3769-4221-beb1-d7a3aeba7dad' /* esto se deberia cambiar?*/
+   // ),
+ // ]
   
-
+/*
 
 export class CategoryRepository implements Repository<Category>{
 
@@ -45,3 +47,4 @@ export class CategoryRepository implements Repository<Category>{
         }
       }
 }
+      */

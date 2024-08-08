@@ -1,6 +1,6 @@
-import { Repository } from "../shared/repository.js";
+//import { Repository } from "../shared/repository.js";
 import { Client } from "./client.entify.js";
-
+/*
 const clients = [
     new Client(
       'Martin',
@@ -9,10 +9,10 @@ const clients = [
       'nastiAlpha55@gmail.com',
       3416637455,
       'a02b91bc-3769-4221-beb1-d7a3aeba7dad' /* esto se deberia cambiar?*/
-    ),
-  ]
+   // ),
+ // ]
   
-
+/*
 
 export class ClientRepository implements Repository<Client>{
 
@@ -48,3 +48,4 @@ export class ClientRepository implements Repository<Client>{
         }
       }
 }
+      */
