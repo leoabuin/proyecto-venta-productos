@@ -1,3 +1,4 @@
+/*
 import { Request, Response, NextFunction } from 'express'
 import { DistributorRepository } from "./distributor.Repository.js";
 import { Distributor } from './distributor.entify.js';
@@ -77,3 +78,4 @@ function findAll(req: Request, res: Response) {
   }
   
   export { sanitizeDistributorInput, findAll, findOne, add, update, remove }
+  */

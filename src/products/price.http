@@ -1,0 +1,17 @@
+
+
+###OBTENER UN PRECIO
+GET http://localhost:3000/api/products/prices
+
+// NO SE POR QUE SE HACE EL FINDONE DEL PRODUCT.CONTROLER. PREGUNTAR
+
+### POST
+# @name createPrice
+POST http://localhost:3000/api/products/prices
+Content-Type: application/json
+
+{
+    "dateFrom": "26/08/2002",
+    "deteUntil": "31/05/2005",
+    "cost": 5000
+}

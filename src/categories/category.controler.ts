@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
-import { CategoryRepository } from './category.Repository.js'
+//import { CategoryRepository } from './category.Repository.js'
 import { Category } from './category.entify.js'
 
-const repository = new CategoryRepository()
-
+//const repository = new CategoryRepository()
+/*
 function sanitizeCategoryInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     name: req.body.name,
@@ -67,3 +67,4 @@ function remove(req: Request, res: Response) {
 }
 
 export { sanitizeCategoryInput, findAll, findOne, add, update, remove }
+*/

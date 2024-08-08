@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
-import { ProductRepository } from './product.Repository.js'
-import { Product } from './product.entify.js'
 
-const repository = new ProductRepository()
+import { Product } from './product.entity.js'
+
+//const repository = new ProductRepository()
 
 function sanitizeProductInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
@@ -23,55 +23,24 @@ function sanitizeProductInput(req: Request, res: Response, next: NextFunction) {
   next()
 }
 
-function findAll(req: Request, res: Response) {
-  res.json({ data: repository.findAll() })
+async function findAll(req: Request, res: Response) {
+  return res.status(500).send({ message: 'aaaaa'})
 }
 
-function findOne(req: Request, res: Response) {
-  const id = req.params.id
-  const product = repository.findOne({ id })
-  if (!product) {
-    return res.status(404).send({ message: 'Product not found' })
-  }
-  res.json({ data: product})
+async function findOne(req: Request, res: Response) {
+  return res.status(500).send({ message: 'lllllll'})
 }
 
-function add(req: Request, res: Response) {
-  const input = req.body.sanitizedInput
-
-  const productInput = new Product(
-    input.name,
-    input.description,
-    input.waist,
-    input.calification,
-    input.imagen,
-    input.stock
-  )
-
-  const product = repository.add(productInput)
-  return res.status(201).send({ message: 'product created', data: product })
+async function add(req: Request, res: Response) {
+  return res.status(500).send({ message: 'Not implementeddfsd'})
 }
 
-function update(req: Request, res: Response) {
-  req.body.sanitizedInput.id = req.params.id
-  const product = repository.update(req.body.sanitizedInput)
-
-  if (!product) {
-    return res.status(404).send({ message: 'Product not found' })
-  }
-
-  return res.status(200).send({ message: 'Product updated successfully', data: product })
+async function update(req: Request, res: Response) {
+  return res.status(500).send({ message: 'Not implementeddfsd'})
 }
 
-function remove(req: Request, res: Response) {
-  const id = req.params.id
-  const product = repository.delete({ id })
-
-  if (!product) {
-    res.status(404).send({ message: 'product not found' })
-  } else {
-    res.status(200).send({ message: 'Product deleted successfully' })
-  }
+async function remove(req: Request, res: Response) {
+  return res.status(500).send({ message: 'aaaaaabbbbb'})
 }
 
 export { sanitizeProductInput, findAll, findOne, add, update, remove }
