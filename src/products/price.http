@@ -1,54 +1,41 @@
 
 
-###OBTENER UN PRECIO
-GET http://localhost:3000/api/products/prices
+###Obtener precios de un producto
+//GET http://localhost:3000/api/prices/15
 
-// NO SE POR QUE SE HACE EL FINDONE DEL PRODUCT.CONTROLER. PREGUNTAR
+###OBTENER TODOS LOS PRECIOS
+GET http://localhost:3000/api/prices
 
-### POST
+
+###POST
 # @name createPrice
-POST http://localhost:3000/api/products/prices
+POST http://localhost:3000/api/products/3/prices
 Content-Type: application/json
 
 {
-    "dateFrom": "26/08/2002",
-    "dateUntil": "31/05/2005",
-    "cost": 5000
+    "dateFrom": "01/01/2045",
+    "dateUntil": "01/01/2050",
+    "cost": 30000
 }
 
 
-### ID
-@id = {{createPrice.response.body.data.id}}
 
+
+//### ID
+//@id = {{createPrice.response.body.data.id}}
 ### GET ONE
-GET http://localhost:3000/api/products/prices/{{id}}
+//GET http://localhost:3000/api/products/prices/{{id}}
 
 ### PUT 
-PUT  http://localhost:3000/api/products/prices/{{id}}
+//PUT  http://localhost:3000/api/products/prices/{{id}}
 
-Content-Type: application/json
-{
-    "dateFrom": "29/08/2002",
-    "dateUntil": "13/09/2015",
-    "cost": 10000
-}
-//CUENDO HAGO EL UPDATE ME APARECE QUE SE HIZO CORRECTAMENTE PERO CUANDO
-// DESPUES HAGO EL GETONE ME DEVUELVE EL DESACTUALIZADO
-
-
-### POST PRICE TO DELETE
-# @name createPriceToDelete
-POST http://localhost:3000/api/products/prices
-Content-Type: application/json
-
-{
-    "dateFrom": "31/05/2024",
-    "dateUntil": "13/09/2025",
-    "cost": 50000
-}
-
-
-
+//Content-Type: application/json
+//{
+   // "dateFrom": "29/08/2002",
+    //"dateUntil": "13/09/2015",
+    //"cost": 10000
+//}
 ### DELETE
-@idToDelete = {{createPriceToDelete.response.body.data.id}}
-DELETE http://localhost:3000/api/products/prices/1
+//@idToDelete = {{createPrice.response.body.data.id}}
+//DELETE http://localhost:3000/api/products/prices/1
+

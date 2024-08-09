@@ -1,9 +1,5 @@
-### obtener todos los characters
+### obtener todos los productos
 GET http://localhost:3000/api/products
-
-
-### obtener un character
-GET http://localhost:3000/api/products/a02b91bc-3769-4221-beb1-d7a3aeba7dad
 
 ### POST
 # @name createProduct
@@ -11,28 +7,24 @@ POST http://localhost:3000/api/products
 Content-Type: application/json
 
 {
-  "name": "zapatilla",
-  "description": "azules",
-  "waist": "12",
-  "calification": 10,
-  "stock": 10,
-  "imagen": 10,
-  "prices":[2]
+  "name": "pantalones",
+  "description": "rojos",
+  "waist": "M",
+  "calification": 5,
+  "stock": 50,
+  "imagen": 24
 }
 
 
-### modificar un character (PUT - recurso completo e idempotente)
-PUT http://localhost:3000/api/products/a02b91bc-3769-4221-beb1-d7a3aeba7dad
-Content-Type: application/json
 
-{
-  "name": "joggig",
-  "description": "rojo",
-  "waist": 9,
-  "calification": 10,
-  "stock": 10,
-  "imagen": 10 
-}
+### buscar un producto 
+###ID
+@id = {{createProduct.response.body.data.id}}
+### obtener un producto
+GET http://localhost:3000/api/products/{{id}}
+
+
+// SE PUEDE HACER UN UPDATE DE PRODUCTO? COMO HACER CON EL ARRAY DE PRECIOS?
 
 ### modificar un character (PATCH - recurso parcial)
 PATCH http://localhost:3000/api/products/a02b91bc-3769-4221-beb1-d7a3aeba7dad
@@ -45,5 +37,26 @@ Content-Type: application/json
   "imagen": 10  
 }
 
-### borrar un character
-DELETE http://localhost:3000/api/products/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+
+### POST
+# @name createProductToDelete
+POST http://localhost:3000/api/products
+Content-Type: application/json
+
+{
+  "name": "auriculares",
+  "description": "verdes",
+  "waist": "XL",
+  "calification": 7,
+  "stock": 100,
+  "imagen": 2854
+}
+
+
+
+
+
+
+### DELETE a product
+@idToDelete = {{createProductToDelete.response.body.data.id}}
+DELETE http://localhost:3000/api/products/{{idToDelete}}

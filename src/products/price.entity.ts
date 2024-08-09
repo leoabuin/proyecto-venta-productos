@@ -17,6 +17,6 @@ export class Price extends BaseEntity {
     @Property({nullable: true})
     cost!: number
 
-    @ManyToOne(()=> Product, {nullable:true} )
+    @ManyToOne(()=> Product, {nullable:false} )
     product!: Rel<Product>
 }

@@ -21,6 +21,7 @@ app.use((req, res, next) => {
 
 app.use('/api/products', productRouter)
 app.use('/api/products/prices', priceRouter)
+app.use('/api/prices',priceRouter)
 //app.use('/api/clients', clientRouter)
 //app.use('/api/categories', categoryRouter)
 //app.use('/api/distributors', distributorRouter)

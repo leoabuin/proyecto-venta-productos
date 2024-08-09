@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { orm } from '../shared/orm.js'
 import { Price } from './price.entity.js'
 import { error } from 'console'
+import { Product } from './product.entity.js'
 
 
 
@@ -65,4 +66,18 @@ async function remove(req: Request, res: Response) {
   }
 }
 
-export { findAll,findOne ,add, update, remove }
+async function addPriceToProduct(req: Request, res: Response) {
+  try {
+    const idProd = Number.parseInt(req.params.idProduct)
+    const product = em.getReference(Product,idProd)
+    let newPrice = await em.create(Price,req.body)
+    newPrice.product=product
+    await em.flush()
+    res.status(200).json({message: 'product asigned to price'})
+  } catch (error: any) {
+    res.status(500).json({message: error.message})
+  }
+  
+}
+
+export const priceControler = { findAll,findOne ,add, update, remove,addPriceToProduct }

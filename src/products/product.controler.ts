@@ -38,7 +38,13 @@ async function findAll(req: Request, res: Response) {
   }
 
 async function findOne(req: Request, res: Response) {
-  return res.status(500).send({ message: 'lllllll'})
+  try {
+    const id = Number.parseInt(req.params.id)
+    const product = await em.findOneOrFail(Product,{id},{populate:['prices']})
+    res.status(200).json({message:'found Product',data:product})
+  } catch (error: any) {
+    return res.status(500).json({message: error.message})
+  }
 }
 
 async function add(req: Request, res: Response) {
@@ -56,7 +62,14 @@ async function update(req: Request, res: Response) {
 }
 
 async function remove(req: Request, res: Response) {
-  return res.status(500).send({ message: 'aaaaaabbbbb'})
+  try {
+    const id = Number.parseInt(req.params.id)
+    const product = em.getReference(Product, id)
+    await em.removeAndFlush(product)
+    res.status(200).json({message: 'product deleted'})
+  } catch (error: any) {
+    res.status(500).json({message: error.message})
+  }
 }
 
 export { sanitizeProductInput, findAll, findOne, add, update, remove }
