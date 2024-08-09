@@ -5,17 +5,19 @@ GET http://localhost:3000/api/products
 ### obtener un character
 GET http://localhost:3000/api/products/a02b91bc-3769-4221-beb1-d7a3aeba7dad
 
-### crear un nuevo character
+### POST
+# @name createProduct
 POST http://localhost:3000/api/products
 Content-Type: application/json
 
 {
   "name": "zapatilla",
   "description": "azules",
-  "waist": 12,
+  "waist": "12",
   "calification": 10,
   "stock": 10,
-  "imagen": 10
+  "imagen": 10,
+  "prices":[2]
 }
 
 

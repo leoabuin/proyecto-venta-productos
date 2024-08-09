@@ -12,11 +12,11 @@ export class Price extends BaseEntity {
     dateFrom!: String
 
     @Property()
-    deteUntil!: String
+    dateUntil!: String
 
-    @Property({nullable: false})
+    @Property({nullable: true})
     cost!: number
 
     @ManyToOne(()=> Product, {nullable:true} )
-    product!: Product
+    product!: Rel<Product>
 }
