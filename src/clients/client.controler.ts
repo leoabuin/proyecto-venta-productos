@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
-import { ClientRepository } from './client.Repository.js'
+//import { ClientRepository } from './client.Repository.js'
 import { Client } from './client.entify.js'
-
+/*
 const repository = new ClientRepository()
 
 function sanitizeClientInput(req: Request, res: Response, next: NextFunction) {
@@ -73,3 +73,4 @@ function remove(req: Request, res: Response) {
 }
 
 export { sanitizeClientInput, findAll, findOne, add, update, remove }
+*/

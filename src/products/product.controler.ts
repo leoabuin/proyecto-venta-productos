@@ -1,17 +1,22 @@
 import { Request, Response, NextFunction } from 'express'
-import { ProductRepository } from './product.Repository.js'
-import { Product } from './product.entify.js'
+import { orm } from '../shared/orm.js'
+import { Product } from './product.entity.js'
+import { Price } from './price.entity.js'
+import { json } from 'stream/consumers'
 
-const repository = new ProductRepository()
+
+
+const em = orm.em
 
 function sanitizeProductInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     name: req.body.name,
     description: req.body.description,
-    waist: req.body.weist,
+    waist: req.body.waist,
     calification: req.body.calification,
     imagen: req.body.imagen,
     stock: req.body.stock,
+    prices: req.body.prices
   }
   //more checks here
 
@@ -23,54 +28,47 @@ function sanitizeProductInput(req: Request, res: Response, next: NextFunction) {
   next()
 }
 
-function findAll(req: Request, res: Response) {
-  res.json({ data: repository.findAll() })
-}
-
-function findOne(req: Request, res: Response) {
-  const id = req.params.id
-  const product = repository.findOne({ id })
-  if (!product) {
-    return res.status(404).send({ message: 'Product not found' })
+async function findAll(req: Request, res: Response) {
+  try {
+    const products = await em.find(Product,{},{populate:['prices']})
+    res.status(200).json({message:'found all Products',data:products})
+  } catch (error: any) {
+    return res.status(500).json({message: error.message})
   }
-  res.json({ data: product})
-}
-
-function add(req: Request, res: Response) {
-  const input = req.body.sanitizedInput
-
-  const productInput = new Product(
-    input.name,
-    input.description,
-    input.waist,
-    input.calification,
-    input.imagen,
-    input.stock
-  )
-
-  const product = repository.add(productInput)
-  return res.status(201).send({ message: 'product created', data: product })
-}
-
-function update(req: Request, res: Response) {
-  req.body.sanitizedInput.id = req.params.id
-  const product = repository.update(req.body.sanitizedInput)
-
-  if (!product) {
-    return res.status(404).send({ message: 'Product not found' })
   }
 
-  return res.status(200).send({ message: 'Product updated successfully', data: product })
+async function findOne(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id)
+    const product = await em.findOneOrFail(Product,{id},{populate:['prices']})
+    res.status(200).json({message:'found Product',data:product})
+  } catch (error: any) {
+    return res.status(500).json({message: error.message})
+  }
 }
 
-function remove(req: Request, res: Response) {
-  const id = req.params.id
-  const product = repository.delete({ id })
+async function add(req: Request, res: Response) {
+  try {
+    const product = em.create(Product,req.body.sanitizedInput)
+    await em.flush()
+    res.status(201).json({message:'Product created', data:product})
+  } catch (error:any) {
+      res.status(500).json({message: error.message})
+  }
+}
 
-  if (!product) {
-    res.status(404).send({ message: 'product not found' })
-  } else {
-    res.status(200).send({ message: 'Product deleted successfully' })
+async function update(req: Request, res: Response) {
+  return res.status(500).send({ message: 'Not implementeddfsd'})
+}
+
+async function remove(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id)
+    const product = em.getReference(Product, id)
+    await em.removeAndFlush(product)
+    res.status(200).json({message: 'product deleted'})
+  } catch (error: any) {
+    res.status(500).json({message: error.message})
   }
 }
 

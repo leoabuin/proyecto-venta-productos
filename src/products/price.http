@@ -1,0 +1,41 @@
+
+
+###Obtener precios de un producto
+//GET http://localhost:3000/api/prices/15
+
+###OBTENER TODOS LOS PRECIOS
+GET http://localhost:3000/api/prices
+
+
+###POST
+# @name createPrice
+POST http://localhost:3000/api/products/3/prices
+Content-Type: application/json
+
+{
+    "dateFrom": "01/01/2045",
+    "dateUntil": "01/01/2050",
+    "cost": 30000
+}
+
+
+
+
+//### ID
+//@id = {{createPrice.response.body.data.id}}
+### GET ONE
+//GET http://localhost:3000/api/products/prices/{{id}}
+
+### PUT 
+//PUT  http://localhost:3000/api/products/prices/{{id}}
+
+//Content-Type: application/json
+//{
+   // "dateFrom": "29/08/2002",
+    //"dateUntil": "13/09/2015",
+    //"cost": 10000
+//}
+### DELETE
+//@idToDelete = {{createPrice.response.body.data.id}}
+//DELETE http://localhost:3000/api/products/prices/1
+
