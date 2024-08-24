@@ -1,8 +1,8 @@
 import { orm } from '../shared/orm.js'
-import { Entity,PrimaryKey,Property,OneToMany, Cascade, Collection, Rel } from '@mikro-orm/core'
-import crypto from 'node:crypto'
+import { Entity,PrimaryKey,Property,OneToMany, Cascade, Collection, Rel, ManyToOne } from '@mikro-orm/core'
 import { Price } from './price.entity.js'
 import { BaseEntity } from '../shared/baseEntity.entity.js'
+import { Distributor } from '../distributors/distributor.entity.js'
 
 
 @Entity()
@@ -32,4 +32,6 @@ export class Product extends BaseEntity {
     @OneToMany(()=> Price, price => price.product, {cascade: [Cascade.ALL]})
     prices =  new Collection<Price>(this)
   
+    @ManyToOne(()=> Distributor, {nullable:false} )
+    distributor!: Rel<Distributor>
 }

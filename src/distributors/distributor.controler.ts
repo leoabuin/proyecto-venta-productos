@@ -1,24 +1,22 @@
-/*
-import { Request, Response, NextFunction } from 'express'
-import { DistributorRepository } from "./distributor.Repository.js";
-import { Distributor } from './distributor.entify.js';
+import { Request,Response,NextFunction} from "express";
+import { orm } from "../shared/orm.js";
+import { json } from "stream/consumers";
+import { Distributor } from "./distributor.entity.js";
 
 
-
-
-
-const repository = new DistributorRepository()
-
+const em = orm.em
 
 function sanitizeDistributorInput(req: Request, res: Response, next: NextFunction) {
-    req.body.sanitizedInput = {
-      CUIL: req.body.CUIL,
-      mail: req.body.mail,
-      tel: req.body.tel,
-      adress: req.body.adress
-    }
-    //more checks here
-  
+  req.body.sanitizedInput = {
+    CUIL: req.body.CUIL,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    mail: req.body.mail,
+    telephone: req.body.telephone,
+    adress: req.body.adress,
+    products: req.body.products
+  }
+
     Object.keys(req.body.sanitizedInput).forEach((key) => {
       if (req.body.sanitizedInput[key] === undefined) {
         delete req.body.sanitizedInput[key]
@@ -27,55 +25,57 @@ function sanitizeDistributorInput(req: Request, res: Response, next: NextFunctio
     next()
   }
 
-  
-function findAll(req: Request, res: Response) {
-    res.json({ data: repository.findAll() })
-  }
-  // COMO PUEDO PONER EN LA INTERFAZ QUE TAMBIEN EL FINDONE TAMBIEN ADMITA CUIL
-  function findOne(req: Request, res: Response) {
-    const id = req.params.CUIL
-    const distributor = repository.findOne({ id })
-    if (!distributor) {
-      return res.status(404).send({ message: 'Distributor not found' })
+  async function findAll(req: Request, res: Response) {
+    try {
+      const distributors = await em.find(Distributor,{},{populate:['products']})
+      res.status(200).json({message:'found all Products',data:distributors})
+    } catch (error: any) {
+      return res.status(500).json({message: error.message})
     }
-    res.json({ data: distributor})
   }
-  
-  function add(req: Request, res: Response) {
-    const input = req.body.sanitizedInput
-  
-    const distributorInput = new Distributor(
-      input.CUIL,
-      input.mail,
-      input.tel,
-      input.adress
-    )
-  
-    const distributor = repository.add(distributorInput)
-    return res.status(201).send({ message: 'distributor created', data: distributor })
-  }
-  
-  function update(req: Request, res: Response) {
-    req.body.sanitizedInput.CUIL = req.params.CUIL
-    const distributor = repository.update(req.body.sanitizedInput)
-  
-    if (!distributor) {
-      return res.status(404).send({ message: 'Distributor not found' })
-    }
-  
-    return res.status(200).send({ message: 'Product updated successfully', data: distributor })
-  }
-  
-  function remove(req: Request, res: Response) {
-    const id = req.params.CUIL
-    const distributor = repository.delete({ id })
-  
-    if (!distributor) {
-      res.status(404).send({ message: 'Distributor not found' })
-    } else {
-      res.status(200).send({ message: 'Distributor deleted successfully' })
+
+  async function findOne(req: Request, res: Response) {
+    try {
+      const id = Number.parseInt(req.params.id)
+      const distributor = await em.findOneOrFail( Distributor, {id},{ populate: ['products'] })
+      res.status(200).json({ message: 'distributor', data: distributor })
+    } catch (error: any) {
+      res.status(500).json({ message: error.message })
     }
   }
   
+  async function add(req: Request, res: Response) {
+    try {
+      const distributor = em.create(Distributor, req.body.sanitizedInput)
+      await em.flush()
+      res.status(201).json({ message: 'distributor created', data: distributor })
+    } catch (error: any) {
+      res.status(500).json({ message: error.message })
+    }
+  }
+  
+  async function update(req: Request, res: Response) {
+    try {
+      const id = Number.parseInt(req.params.id)
+      const distributorUpdate = await em.findOneOrFail(Distributor, { id })
+      em.assign(distributorUpdate, req.body.sanitizedInput)
+      await em.flush()
+      res
+        .status(200)
+        .json({ message: 'Distributor Updated', data: distributorUpdate })
+    } catch (error: any) {
+      res.status(500).json({ message: error.message })
+    }
+  }
+
+  async function remove(req: Request, res: Response) {
+    try {
+      const id = Number.parseInt(req.params.id)
+      const distributor= em.getReference(Distributor, id)
+      await em.removeAndFlush(distributor)
+    } catch (error: any) {
+      res.status(500).json({ message: error.message })
+    }
+  }
   export { sanitizeDistributorInput, findAll, findOne, add, update, remove }
-  */
+

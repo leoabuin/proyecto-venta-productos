@@ -1,14 +1,12 @@
-/*
 import { Router } from "express";
-import { sanitizeDistributorInput, findAll, findOne, add, update,remove } from "./distributor.controler.js";
-
+import { findAll } from "../products/product.controler";
 
 export const distributorRouter = Router()
 
+//distributorRouter.post('/:idProduct/prices', distributorRControler.addPriceToProduct)
 distributorRouter.get('/', findAll)
-distributorRouter.get('/:CUIL', findOne)
-distributorRouter.post('/', sanitizeDistributorInput, add)
-distributorRouter.put('/:CUIL', sanitizeDistributorInput, update)
-distributorRouter.patch('/:CUIL', sanitizeDistributorInput, update)
-distributorRouter.delete('/:CUIL', remove)
-*/
+/*distributorRouter.get('/:id', findOne)
+distributorRouter.post('/',sanitizeDistributorInput, add)
+distributorRouter.put('/:id', update)
+distributorRouter.patch('/:id', update)
+distributorRouter.delete('/:id', remove)*/
