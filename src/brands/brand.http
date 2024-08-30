@@ -1,0 +1,54 @@
+### obtener todos los productos
+GET http://localhost:3000/api/brands
+
+
+
+### POST
+# @name createBrand
+POST http://localhost:3000/api/brands
+Content-Type: application/json
+
+{
+  "name": "sony",
+  "description": "model 2023",
+  "website": "sony.com",
+  "countryOfOrigin": "China"
+}
+
+### buscar un producto 
+###ID
+@id = {{createBrand.response.body.data.id}}
+### obtener un producto
+GET http://localhost:3000/api/brands/{{id}}
+
+
+
+### PUT 
+PUT  http://localhost:3000/api/brands/{{id}}
+Content-Type: application/json
+
+{
+  "name": "apple",
+  "description": "apple argentina",
+  "website": "apple.com.ar",
+  "countryOfOrigin": "EEUU"
+}
+
+
+### POST
+# @name createBrandToDeleted
+POST http://localhost:3000/api/brands
+Content-Type: application/json
+
+{
+  "name": "Adidas",
+  "description": "adidas sport argentina",
+  "website": "adidas.com.ar",
+  "countryOfOrigin":  "China"
+}
+
+###ID
+@idToDeleted = {{createBrandToDeleted.response.body.data.id}}
+
+
+DELETE http://localhost:3000/api/brands/{{idToDeleted}}
