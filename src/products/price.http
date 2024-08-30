@@ -9,13 +9,13 @@ GET http://localhost:3000/api/prices
 
 ###POST
 # @name createPrice
-POST http://localhost:3000/api/products/3/prices
+POST http://localhost:3000/api/products/6/prices
 Content-Type: application/json
 
 {
-    "dateFrom": "01/01/2045",
-    "dateUntil": "01/01/2050",
-    "cost": 30000
+    "dateFrom": "01/01/2024",
+    "dateUntil": "01/01/2025",
+    "cost":60000
 }
 
 

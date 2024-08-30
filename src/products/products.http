@@ -15,6 +15,20 @@ Content-Type: application/json
   "imagen": 24
 }
 
+### POST
+# @name createProduct
+POST http://localhost:3000/api/brands/5/products
+Content-Type: application/json
+
+{
+  "name": "celular",
+  "description": "celular 4''",
+  "waist": "xl",
+  "calification": 8,
+  "stock": 100,
+  "imagen": 105
+}
+
 
 
 ### buscar un producto 
