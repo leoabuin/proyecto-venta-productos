@@ -1,4 +1,4 @@
-/*
+
 import { Router } from "express";
 import { sanitizeClientInput, findAll, findOne, add, update,remove } from "./client.controler.js";
 
@@ -11,4 +11,3 @@ clientRouter.post('/', sanitizeClientInput, add)
 clientRouter.put('/:id', sanitizeClientInput, update)
 clientRouter.patch('/:id', sanitizeClientInput, update)
 clientRouter.delete('/:id', remove)
-*/

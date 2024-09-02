@@ -2,19 +2,23 @@
 GET http://localhost:3000/api/clients
 
 
-### obtener un character
-GET http://localhost:3000/api/clients/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+### buscar un cliente 
+###ID
+@id = {{createClient.response.body.data.id}}
+### obtener un producto
+GET http://localhost:3000/api/clients/{{id}}
 
-### crear un nuevo character
+### POST
+# @name createClient
 POST http://localhost:3000/api/clients
 Content-Type: application/json
 
 {
+  "dni": 45656800,
   "name": "Ricardo",
   "surname": "Fort",
-  "dni": 45656800,
   "mail": "richardFortMiami@gmail.com",
-  "phoneNumbre": 3415665866,
+  "phoneNumber": 341
 }
 
 
@@ -31,16 +35,22 @@ Content-Type: application/json
 }
 
 
-### modificar un character (PATCH - recurso parcial)
-PATCH http://localhost:3000/api/clients/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+### POST
+# @name createClientToDeleted
+POST http://localhost:3000/api/clients
 Content-Type: application/json
 
 {
-
-"surname": "Fort",
-  "dni": 45656800,
-  "mail": "richardFortMiami@gmail.com" 
+  "dni": 44290906,
+  "name": "Leonel",
+  "surname": "Abuin",
+  "mail": "leonelabuin@gmail.com",
+  "phoneNumber": 154290054
 }
 
-### borrar un character
-DELETE http://localhost:3000/api/clients/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+
+###ID
+@idToDeleted = {{createClientToDeleted.response.body.data.id}}
+
+
+DELETE http://localhost:3000/api/clients/{{idToDeleted}}

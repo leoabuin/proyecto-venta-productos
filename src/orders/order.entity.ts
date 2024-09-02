@@ -1,0 +1,26 @@
+import { Property,Entity,PrimaryKey,ManyToOne,Rel } from "@mikro-orm/core";
+import { BaseEntity } from "../shared/baseEntity.entity.js";
+import { Client } from "../clients/client.entity.js";
+
+@Entity()
+export class Order extends BaseEntity {
+  
+  @PrimaryKey()
+  id?: number
+
+  @Property({nullable: false})
+  fecha_pedido?: Date
+
+  @Property({nullable: false})
+  total?: number
+
+  @Property({nullable: false})  
+  estado?: string
+  
+  @Property({nullable: false})
+  metodo_pago?: string
+
+  @ManyToOne(()=> Client, {nullable:false} )
+  client!: Rel<Client>
+ 
+}

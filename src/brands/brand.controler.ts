@@ -14,7 +14,7 @@ function sanitizeBrandInput(req: Request, res: Response, next: NextFunction) {
       description: req.body.description,
       website: req.body.website,
       countryOfOrigin: req.body.countryOfOrigin,
-      products: req.body.Products
+      products: req.body.products
     }
     //more checks here
   
