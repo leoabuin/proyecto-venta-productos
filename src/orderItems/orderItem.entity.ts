@@ -6,8 +6,11 @@ import { Product } from "../products/product.entity.js";
 @Entity()
 export class OrderItem {
   
-    @ManyToOne(()=> Order, {primary:true})
+    @ManyToOne(()=> Order)
     order!:Order
+
+    @Property()
+    orderId!: number
 
     @ManyToOne(()=> Product, {primary:true})
     product!:Product

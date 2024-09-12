@@ -4,7 +4,7 @@ import { productRouter } from './products/product.routes.js'
 import { priceRouter } from './products/price.routes.js'
 import { brandRouter } from './brands/brand.routes.js'
 import { orderRouter } from './orders/order.routes.js'
-//import { categoryRouter } from './categories/category.routes.js'
+import { categoryRouter } from './categories/category.routes.js'
 import { clientRouter } from './clients/client.routes.js'
 //import {distributorRouter} from './distributors/distributors.routes.js'
 import { orm,syncSchema } from './shared/orm.js'
@@ -27,7 +27,7 @@ app.use('/api/prices',priceRouter)
 app.use('/api/brands',brandRouter)
 app.use('/api/clients', clientRouter)
 app.use('/api/orders',orderRouter)
-//app.use('/api/categories', categoryRouter)
+app.use('/api/categories', categoryRouter)
 //app.use('/api/distributors', distributorRouter)
 
 app.use((_, res) => {
