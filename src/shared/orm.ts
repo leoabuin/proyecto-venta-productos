@@ -23,6 +23,6 @@ export const orm = await MikroORM.init({
         /*
         await generator.dropSchema()
         await generator.createSchema()
-      */
+        */
        await generator.updateSchema()
   }
