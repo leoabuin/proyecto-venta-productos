@@ -9,7 +9,7 @@ GET http://localhost:3000/api/prices
 
 ###POST
 # @name createPrice
-POST http://localhost:3000/api/products/6/prices
+POST http://localhost:3000/api/products/13/prices
 Content-Type: application/json
 
 {

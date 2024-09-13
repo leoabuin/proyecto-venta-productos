@@ -17,7 +17,9 @@ function sanitizeProductInput(req: Request, res: Response, next: NextFunction) {
     calification: req.body.calification,
     imagen: req.body.imagen,
     stock: req.body.stock,
-    prices: req.body.prices
+    prices: req.body.prices,
+    brand: req.body.brand,
+    category: req.body.category,
   }
   //more checks here
 

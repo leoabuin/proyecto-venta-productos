@@ -29,3 +29,5 @@ export class Order extends BaseEntity {
   orderItems =  new Collection<OrderItem>(this)
  
 }
+
+// DEPENDENCIA CIRCULAR ENTRE Order Y OrderItem

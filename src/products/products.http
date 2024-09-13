@@ -7,26 +7,14 @@ POST http://localhost:3000/api/products
 Content-Type: application/json
 
 {
-  "name": "pantalones",
-  "description": "rojos",
-  "waist": "M",
-  "calification": 5,
-  "stock": 50,
-  "imagen": 24
-}
-
-### POST
-# @name createProduct
-POST http://localhost:3000/api/brands/5/products
-Content-Type: application/json
-
-{
-  "name": "celular",
+  "name": "tablet",
   "description": "celular 4''",
   "waist": "xl",
   "calification": 8,
   "stock": 100,
-  "imagen": 105
+  "imagen": 105,
+  "brand":1,
+  "category": 1
 }
 
 

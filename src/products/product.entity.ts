@@ -4,6 +4,7 @@ import crypto from 'node:crypto'
 import { Price } from './price.entity.js'
 import { BaseEntity } from '../shared/baseEntity.entity.js'
 import { Brand } from '../brands/brand.entity.js'
+import { Category } from '../categories/category.entity.js'
 
 
 @Entity()
@@ -35,5 +36,8 @@ export class Product extends BaseEntity {
 
     @ManyToOne(()=> Brand, {nullable:false})
     brand!:Brand
+
+    @ManyToOne(()=> Category, {nullable:false})
+    category!:Category
   
 }
