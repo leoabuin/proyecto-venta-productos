@@ -1,41 +1,47 @@
-### obtener todos los characters
+### obtener todos los distribuidores
 GET http://localhost:3000/api/distributors
 
 
-### obtener un character
-GET http://localhost:3000/api/distributors/20-458450-45
+### obtener un distribuidor
+GET http://localhost:3000/api/distributors/2045845042
 
-### crear un nuevo character
+### crear un nuevo distibuidor
 POST http://localhost:3000/api/distributors
 Content-Type: application/json
 
 {
-  "CUIL": "20-458450-45",
-  "mail": "boby@gmail.com"
+  "CUIL": 2045845042,
+  "name":"Leonel",
+  "surname":"Abuin",
+  "email": "leoy@gmail.com",
+  "phoneNumber":"3364290054",
+  "address":"Los pinos 2650"
 }
 
 
-### modificar un character (PUT - recurso completo e idempotente)
-PUT http://localhost:3000/api/distributors/20-458450-45
+### modificar un distribuidor(patch)
+PATCH http://localhost:3000/api/distributors/2045845042
 Content-Type: application/json
 
 {
-"CUIL": "20-458450-45",
-"mail": "chapubraña@hotmail.com",
-"tel":"154826452",
-"adress": "1 y 57"
+  "email": "leonelabuin2002@gmail.com",
+  "phoneNumber":"3364290054",
+  "address":"Los pinos 2650"
 }
 
 
-### modificar un character (PATCH - recurso parcial)
-PATCH http://localhost:3000/api/distributors/20-458450-45
+### modificar un distribuidor(put)
+PUT http://localhost:3000/api/distributors/2045845042
 Content-Type: application/json
 
 {
-
-"tel":"99999999"
-
+  "CUIL": 2045845555,
+  "name":"Juan Sebastian",
+  "surname":"Veron",
+  "email": "jbVeron@gmail.com",
+  "phoneNumber":"3364290554",
+  "address":"Los pinos 2650"
 }
 
 ### borrar un character
-DELETE http://localhost:3000/api/distributors/20-458450-45
+DELETE http://localhost:3000/api/distributors/2045845555

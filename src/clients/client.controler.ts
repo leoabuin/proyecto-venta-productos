@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { orm } from '../shared/orm.js'
 import { Client } from './client.entity.js'
+import { validateUser } from './clientSchema.js'
 
 
 
@@ -13,6 +14,7 @@ function sanitizeClientInput(req: Request, res: Response, next: NextFunction) {
     dni: req.body.dni,
     mail: req.body.mail,
     phoneNumber: req.body.phoneNumber,
+    adress: req.body.adress,
     userName: req.body.userName,
     password: req.body.password,
     orders: req.body.orders
@@ -48,13 +50,18 @@ async function findOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
-    const client = em.create(Client,req.body.sanitizedInput)
+    const result = validateUser(req.body)
+    if (!result.success) {
+      return res.status(400).json({ error: JSON.parse(result.error.message) })
+    }
+    const client = em.create(Client, req.body.sanitizedInput)
     await em.flush()
-    res.status(201).json({message:'Client created', data:client})
-  } catch (error:any) {
-      res.status(500).json({message: error.message})
+    res.status(201).json({ message: 'Client created', data: client })
+  } catch(error: any){
+    res.status(500).json({message: error.message})
   }
 }
+
 
 async function update(req: Request, res: Response) {
   try{

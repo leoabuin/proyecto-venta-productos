@@ -2,7 +2,7 @@ import { Request,Response,NextFunction} from "express";
 import { orm } from "../shared/orm.js";
 import { json } from "stream/consumers";
 import { Brand } from "./brand.entity.js";
-
+import { validateBrand, validateBrandPatch } from "./brandSchema.js";
 
 
 const em = orm.em
@@ -17,12 +17,13 @@ function sanitizeBrandInput(req: Request, res: Response, next: NextFunction) {
       products: req.body.products
     }
     //more checks here
-  
+  /*
     Object.keys(req.body.sanitizedInput).forEach((key) => {
       if (req.body.sanitizedInput[key] === undefined) {
         delete req.body.sanitizedInput[key]
       }
     })
+      */
     next()
   }
 
@@ -46,19 +47,25 @@ function sanitizeBrandInput(req: Request, res: Response, next: NextFunction) {
   }
   
   async function add(req: Request, res: Response) {
-    try {
-      const brand = em.create(Brand,req.body.sanitizedInput)
+    const result = validateBrand(req.body)
+    if (!result.success){
+      return res.status(400).json({ error: JSON.parse(result.error.message) })
+    }
+    const brand = em.create(Brand,req.body.sanitizedInput)
       await em.flush()
       res.status(201).json({message:'Brand created', data:brand})
-    } catch (error:any) {
-        res.status(500).json({message: error.message})
-    }
   }
   
   async function update(req: Request, res: Response) {
     try{
       const id = Number.parseInt(req.params.id)
-      const brand = em.getReference(Brand, id)
+      const brand = await em.findOneOrFail(Brand, {id})
+      let brandUpdate
+      if (req.method === 'PATCH') {
+        brandUpdate = validateBrandPatch(req.body)
+      } else {
+        brandUpdate = validateBrand(req.body)
+      }
       em.assign(brand, req.body)
       await em.flush()
       res.status(200).json({message: 'brand updated',data:brand})

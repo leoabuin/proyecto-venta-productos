@@ -1,6 +1,7 @@
 import { Request,Response,NextFunction } from 'express'
 import { orm } from '../shared/orm.js'
 import { Category } from './category.entity.js'
+import { validateCategory } from './categorySchema.js'
 
 
 const em = orm.em
@@ -12,12 +13,13 @@ function sanitizeCategoryInput(req: Request, res: Response, next: NextFunction) 
     products: req.body.products,
   }
   //more checks here
-
+  /*
   Object.keys(req.body.sanitizedInput).forEach((key) => {
     if (req.body.sanitizedInput[key] === undefined) {
       delete req.body.sanitizedInput[key]
     }
   })
+  */
   next()
 }
 
@@ -41,21 +43,39 @@ async function findOne(req: Request, res: Response) {
 }
 
 async function add(req: Request, res: Response) {
-  try {
-    const category = em.create(Category,req.body.sanitizedInput)
+  const result = validateCategory(req.body)
+  if (!result.success){
+    return res.status(400).json({ error: JSON.parse(result.error.message) })
+  }
+  const category = em.create(Category,req.body.sanitizedInput)
     await em.flush()
     res.status(201).json({message:'Category created', data:category})
+}
+
+async function update(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id)
+    const category = await em.findOneOrFail(Category,{id})
+    let categoryUpdate = validateCategory(req.body)
+    em.assign(category, req.body)
+    await em.flush()
+    res.status(200).json({message: 'category updated',data:category})
+    console.log('updated')
+
   } catch (error:any) {
-      res.status(500).json({message: error.message})
+    res.status(500).json({message: error.message})
   }
 }
 
-function update(req: Request, res: Response) {
-  return res.status(401).send({ message: 'function not omplemented' })
-}
-
-function remove(req: Request, res: Response) {
-  return res.status(401).send({ message: 'function not omplemented' })
+async function remove(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id)
+    const category = em.getReference(Category, id)
+    await em.removeAndFlush(category)
+    res.status(200).json({message: 'category deleted'})
+  } catch (error: any) {
+    res.status(500).json({message: error.message})
+  }
 }
 
 

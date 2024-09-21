@@ -5,6 +5,7 @@ import { Price } from './price.entity.js'
 import { BaseEntity } from '../shared/baseEntity.entity.js'
 import { Brand } from '../brands/brand.entity.js'
 import { Category } from '../categories/category.entity.js'
+import { Distributor } from '../distributors/distributor.entity.js'
 
 
 @Entity()
@@ -39,5 +40,8 @@ export class Product extends BaseEntity {
 
     @ManyToOne(()=> Category, {nullable:false})
     category!:Category
+
+    @ManyToOne(()=> Distributor, {nullable:false})
+    distributor!:Distributor
   
 }

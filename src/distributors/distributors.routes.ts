@@ -1,4 +1,4 @@
-/*
+
 import { Router } from "express";
 import { sanitizeDistributorInput, findAll, findOne, add, update,remove } from "./distributor.controler.js";
 
@@ -9,6 +9,5 @@ distributorRouter.get('/', findAll)
 distributorRouter.get('/:CUIL', findOne)
 distributorRouter.post('/', sanitizeDistributorInput, add)
 distributorRouter.put('/:CUIL', sanitizeDistributorInput, update)
-distributorRouter.patch('/:CUIL', sanitizeDistributorInput, update)
+distributorRouter.patch('/:CUIL', update)
 distributorRouter.delete('/:CUIL', remove)
-*/
