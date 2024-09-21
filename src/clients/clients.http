@@ -1,6 +1,23 @@
 ### obtener todos los characters
 GET http://localhost:3000/api/clients
 
+### POST
+### POST
+# @name createClient
+POST http://localhost:3000/api/clients
+Content-Type: application/json
+
+{
+  "dni": 44290906,
+  "name": "Leonel",
+  "surname": "Abuin",
+  "mail": "leonelabuin2002@gmail.com",
+  "phoneNumber": "3364290054",
+  "userName": "Leo29",
+  "password": "Delpotro20"
+}
+
+
 
 ### buscar un cliente 
 ###ID
@@ -8,18 +25,7 @@ GET http://localhost:3000/api/clients
 ### obtener un producto
 GET http://localhost:3000/api/clients/{{id}}
 
-### POST
-# @name createClient
-POST http://localhost:3000/api/clients
-Content-Type: application/json
 
-{
-  "dni": 45656800,
-  "name": "Ricardo",
-  "surname": "Fort",
-  "mail": "richardFortMiami@gmail.com",
-  "phoneNumber": 341
-}
 
 
 ### modificar un character (PUT - recurso completo e idempotente)
@@ -31,7 +37,7 @@ Content-Type: application/json
   "surname": "Milei",
   "dni": 45656400,
   "mail": "JGM2024@gmail.com",
-  "phoneNumbre": 3415699866,
+  "phoneNumbre": 3415699866
 }
 
 

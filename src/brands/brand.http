@@ -1,54 +1,48 @@
-### obtener todos los productos
+### obtener todas las marcas
 GET http://localhost:3000/api/brands
 
 
 
 ### POST
-# @name createBrand
 POST http://localhost:3000/api/brands
 Content-Type: application/json
 
 {
   "name": "sony",
   "description": "model 2023",
-  "website": "sony.com",
-  "countryOfOrigin": "China"
+  "website": "https://www.sony.com/en/",
+  "countryOfOrigin": "Argentina"
 }
 
-### buscar un producto 
-###ID
-@id = {{createBrand.response.body.data.id}}
-### obtener un producto
-GET http://localhost:3000/api/brands/{{id}}
+### buscar una marca
+GET http://localhost:3000/api/brands/2
+
 
 
 
 ### PUT 
-PUT  http://localhost:3000/api/brands/{{id}}
+PUT  http://localhost:3000/api/brands/3
 Content-Type: application/json
 
 {
-  "name": "apple",
+  "name": "adidas",
   "description": "apple argentina",
   "website": "apple.com.ar",
-  "countryOfOrigin": "EEUU"
+  "countryOfOrigin": "Brasil"
 }
 
 
-### POST
-# @name createBrandToDeleted
-POST http://localhost:3000/api/brands
+### modificar una marca  
+PATCH http://localhost:3000/api/brands/3
 Content-Type: application/json
 
 {
-  "name": "Adidas",
-  "description": "adidas sport argentina",
-  "website": "adidas.com.ar",
-  "countryOfOrigin":  "China"
+  "description": "leonelabuin2002@gmail.com",
+  "website":"https://www.sony.com/en/"
 }
 
-###ID
-@idToDeleted = {{createBrandToDeleted.response.body.data.id}}
 
 
-DELETE http://localhost:3000/api/brands/{{idToDeleted}}
+###DELETE
+
+DELETE http://localhost:3000/api/brands/3

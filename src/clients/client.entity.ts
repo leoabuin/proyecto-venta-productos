@@ -24,7 +24,11 @@ export class Client extends BaseEntity {
   mail?: string
 
   @Property({nullable: false})
-  phoneNumber?: number
+  phoneNumber?: String
+
+  @Property({nullable: false})
+  adress?: String
+
 
   @Property({nullable: false})
   @Unique()

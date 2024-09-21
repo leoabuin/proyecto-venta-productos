@@ -1,23 +1,22 @@
-### obtener todos los characters
+### obtener todos las categorias
 GET http://localhost:3000/api/categories
 
 
-### obtener un character
-GET http://localhost:3000/api/categories/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+### obtener una categoria 
+GET http://localhost:3000/api/categories/1
 
 ### crear un nuevo character
-# @name createCategory
 POST http://localhost:3000/api/categories
 Content-Type: application/json
 
 {
   "name": "Camisetas",
-  "Description": "Aqui encontraras las mejores camisetas de la mejor calidad"
+  "description": "camisetas overzise para hombre"
 }
 
 
 ### modificar un character (PUT - recurso completo e idempotente)
-PUT http://localhost:3000/api/categories/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+PUT http://localhost:3000/api/categories/2
 Content-Type: application/json
 
 {
@@ -36,5 +35,5 @@ Content-Type: application/json
 "description": "Explora nuestra amplia selección de pantalones que combinan estilo y comodidad para cualquier ocasión.",
 }
 
-### borrar un character
-DELETE http://localhost:3000/api/categories/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+### borrar una categoria 
+DELETE http://localhost:3000/api/categories/1
