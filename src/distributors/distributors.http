@@ -24,22 +24,22 @@ PATCH http://localhost:3000/api/distributors/2045845042
 Content-Type: application/json
 
 {
-  "email": "leonelabuin2002@gmail.com",
+  "email": "leonelabuin200.com",
   "phoneNumber":"3364290054",
   "address":"Los pinos 2650"
 }
 
 
 ### modificar un distribuidor(put)
-PUT http://localhost:3000/api/distributors/2045845042
+PUT http://localhost:3000/api/distributors/2045845555
 Content-Type: application/json
 
 {
   "CUIL": 2045845555,
   "name":"Juan Sebastian",
   "surname":"Veron",
-  "email": "jbVeron@gmail.com",
-  "phoneNumber":"3364290554",
+  "email": "jbVeroil.com",
+  "phoneNumber":"hola",
   "address":"Los pinos 2650"
 }
 

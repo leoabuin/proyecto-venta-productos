@@ -70,6 +70,18 @@ async function remove(req: Request, res: Response) {
 }
 
 
+
+async function placeOrder(req:Request, res: Response) {
+  const {usuarioId, lineasPeido} = req.body;
+  try {
+    
+ 
+  } catch (error: any) {
+    res.status(500).json({message: error.message})
+  }
+
+  
+} 
 /*
   1) cliente puede agregar producto a su carrito con su cantidad (lineas de pedido)
   2) cuando el cliente decide finalizar su pedido, presiona finalizar pedido
@@ -82,4 +94,4 @@ async function remove(req: Request, res: Response) {
 
 
 
-export { sanitizeOrderInput, findAll, findOne, add, update, remove }
+export { sanitizeOrderInput, findAll, findOne, add, update, remove, placeOrder}

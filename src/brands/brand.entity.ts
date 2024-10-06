@@ -21,6 +21,9 @@ export class Brand extends BaseEntity{
     @Property({nullable:true})
     countryOfOrigin!: string
 
+    @Property()
+    logo?: string
+
     @OneToMany(()=>Product,product => product.brand)
     products = new Collection <Product>(this)
 }

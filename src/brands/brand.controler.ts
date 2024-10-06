@@ -14,6 +14,7 @@ function sanitizeBrandInput(req: Request, res: Response, next: NextFunction) {
       description: req.body.description,
       website: req.body.website,
       countryOfOrigin: req.body.countryOfOrigin,
+      logo: req.body.logo,
       products: req.body.products
     }
     //more checks here
@@ -49,7 +50,7 @@ function sanitizeBrandInput(req: Request, res: Response, next: NextFunction) {
   async function add(req: Request, res: Response) {
     const result = validateBrand(req.body)
     if (!result.success){
-      return res.status(400).json({ error: JSON.parse(result.error.message) })
+      return res.status(400).json({ errors: result.error.errors });
     }
     const brand = em.create(Brand,req.body.sanitizedInput)
       await em.flush()
@@ -63,8 +64,14 @@ function sanitizeBrandInput(req: Request, res: Response, next: NextFunction) {
       let brandUpdate
       if (req.method === 'PATCH') {
         brandUpdate = validateBrandPatch(req.body)
+        if(!brandUpdate.success){
+          return res.status(400).json({ error: JSON.parse(brandUpdate.error.message) })
+        }
       } else {
         brandUpdate = validateBrand(req.body)
+        if(!brandUpdate.success){
+          return res.status(400).json({ error: JSON.parse(brandUpdate.error.message) })
+        }
       }
       em.assign(brand, req.body)
       await em.flush()

@@ -1,0 +1,83 @@
+### obtener todos los characters
+GET http://localhost:3000/api/users
+
+### POST
+### POST
+
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "dni": 12456784,
+  "name": "Leonel",
+  "surname": "Abuin",
+  "mail": "lafsewabuin2002@gmail.com",
+  "phoneNumber": "3364290054",
+  "adress": "Los pinos 2650",
+  "rol": "Cliente",
+  "userName": "JbVeronnns25",
+  "password": "Delpotrosdfasf50"
+}
+
+
+
+### buscar un cliente 
+
+### obtener un producto
+GET http://localhost:3000/api/users/44444444
+
+
+
+
+### modificar un character (PUT - recurso completo e idempotente)
+PUT http://localhost:3000/api/users/12456784
+Content-Type: application/json
+
+{
+
+  "mail": "545",
+  "phoneNumber": "3364294444",
+  "adress": "zeballos 259",
+  "password": "54"
+}
+
+
+### POST
+
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "dni": 44290906,
+  "name": "Leonel",
+  "surname": "Abuin",
+  "mail": "leonelabuin@gmail.com",
+  "phoneNumber": 154290054
+}
+
+
+### PATCH
+PATCH  http://localhost:3000/api/users/12456784
+Content-Type: application/json
+
+{
+  "mail": "l2002@gmail.com",
+  "phoneNumber": "3364290444",
+  "adress": "rocca 1466"
+}
+
+
+###DELETE
+DELETE http://localhost:3000/api/users/44290906
+
+
+
+
+###POST
+POST http://localhost:3000/api/users/logIn
+Content-Type: application/json
+
+{
+  "userName": "JbVeronnns25", 
+  "password": "Delpotrosdfasf50"   
+}

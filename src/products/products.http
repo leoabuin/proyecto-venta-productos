@@ -2,63 +2,62 @@
 GET http://localhost:3000/api/products
 
 ### POST
-# @name createProduct
 POST http://localhost:3000/api/products
 Content-Type: application/json
 
 {
   "name": "tablet",
   "description": "celular 4''",
-  "waist": "xl",
+  "waist": "S",
   "calification": 8,
   "stock": 100,
-  "imagen": 105,
+  "imagen": "https://www.example.com/images/product123.jpg",
   "brand":1,
-  "category": 1
+  "category": 1,
+  "distributor": 1
 }
-
 
 
 ### buscar un producto 
 ###ID
-@id = {{createProduct.response.body.data.id}}
 ### obtener un producto
-GET http://localhost:3000/api/products/{{id}}
+GET http://localhost:3000/api/products/1
 
 
 // SE PUEDE HACER UN UPDATE DE PRODUCTO? COMO HACER CON EL ARRAY DE PRECIOS?
 
 ### modificar un character (PATCH - recurso parcial)
-PATCH http://localhost:3000/api/products/a02b91bc-3769-4221-beb1-d7a3aeba7dad
+PATCH http://localhost:3000/api/products/1
 Content-Type: application/json
 
 {
-
   "calification": 10,
-  "stock": 10,
-  "imagen": 10  
+  "stock": 50000
 }
-
-
-### POST
-# @name createProductToDelete
-POST http://localhost:3000/api/products
-Content-Type: application/json
-
-{
-  "name": "auriculares",
-  "description": "verdes",
-  "waist": "XL",
-  "calification": 7,
-  "stock": 100,
-  "imagen": 2854
-}
-
 
 
 
 
 
 ### DELETE a product
-@idToDelete = {{createProductToDelete.response.body.data.id}}
-DELETE http://localhost:3000/api/products/{{idToDelete}}
+
+DELETE http://localhost:3000/api/products/4
+
+
+
+
+###PUT
+PUT  http://localhost:3000/api/products/1
+Content-Type: application/json
+
+{
+  "name": "remera",
+  "description": "color negra 5",
+  "waist": "S",
+  "calification": 8,
+  "stock": 500,
+  "imagen": "https://www.example.com/images/product123.jpg",
+  "brand":2,
+  "category": 1,
+  "distributor": 1
+}

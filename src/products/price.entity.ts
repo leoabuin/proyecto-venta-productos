@@ -9,10 +9,10 @@ export class Price extends BaseEntity {
     id?: number
 
     @Property({nullable: false})
-    dateFrom!: String
+    dateFrom!: Date
 
     @Property()
-    dateUntil!: String
+    dateUntil!: Date
 
     @Property({nullable: true})
     cost!: number

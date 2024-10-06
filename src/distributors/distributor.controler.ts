@@ -72,8 +72,14 @@ async function update(req: Request, res: Response) {
   let distributorUpdate
   if (req.method === 'PATCH') {
     distributorUpdate = validateDistributorPatch(req.body)
+    if (!distributorUpdate.success) {
+      return res.status(400).json({ error: JSON.parse(distributorUpdate.error.message) })
+    }
   } else {
     distributorUpdate = validateDistributor(req.body)
+    if (!distributorUpdate.success) {
+      return res.status(400).json({ error: JSON.parse(distributorUpdate.error.message) })
+    }
   }
   em.assign(distributor, req.body)
   await em.flush()

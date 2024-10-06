@@ -59,7 +59,7 @@ const distributorToPatch = z.object({
 
 // para el update
 function validateDistributorPatch(object: any){
-  return distributorToPatch.parse(object)
+  return distributorToPatch.safeParse(object)
 }
 
 

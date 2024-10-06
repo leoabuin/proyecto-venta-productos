@@ -5,10 +5,7 @@ import { Order } from '../orders/order.entity.js'
 
 
 @Entity()
-export class Client extends BaseEntity {
-  
-  @PrimaryKey()
-  id?: number
+export class User extends BaseEntity {
 
   @Property({nullable: false})
   dni?: number
@@ -24,21 +21,23 @@ export class Client extends BaseEntity {
   mail?: string
 
   @Property({nullable: false})
-  phoneNumber?: String
+  phoneNumber?: string
 
   @Property({nullable: false})
-  adress?: String
-
+  adress?: string
 
   @Property({nullable: false})
-  @Unique()
-  userName?: String
+  rol?: string
 
   @Property({nullable: false})
   @Unique()
-  password?: String
+  userName?: string
 
-  @OneToMany(()=> Order, order => order.client, {cascade: [Cascade.ALL]})
+  @Property({nullable: false})
+  @Unique()
+  password?: string
+
+  @OneToMany(()=> Order, order => order.user, {cascade: [Cascade.ALL]})
   orders =  new Collection<Order>(this)
   
 }

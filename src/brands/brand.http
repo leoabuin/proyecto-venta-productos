@@ -8,10 +8,10 @@ POST http://localhost:3000/api/brands
 Content-Type: application/json
 
 {
-  "name": "sony",
-  "description": "model 2023",
-  "website": "https://www.sony.com/en/",
-  "countryOfOrigin": "Argentina"
+  "name": "nike",
+  "description": "nike style(No ropa deportiva)",
+  "website": "https://www.nike.com/en/",
+  "countryOfOrigin": "EEUU"
 }
 
 ### buscar una marca
@@ -27,8 +27,9 @@ Content-Type: application/json
 {
   "name": "adidas",
   "description": "apple argentina",
-  "website": "apple.com.ar",
-  "countryOfOrigin": "Brasil"
+  "website": "https://www.adidas.com/en/",
+  "countryOfOrigin": "Brasil",
+  "logo": "https://www.example.com/images/product123.jpg"
 }
 
 
@@ -38,7 +39,7 @@ Content-Type: application/json
 
 {
   "description": "leonelabuin2002@gmail.com",
-  "website":"https://www.sony.com/en/"
+  "website":"https://www.hawainy.com/en/"
 }
 
 
