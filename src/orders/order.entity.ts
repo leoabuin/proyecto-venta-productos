@@ -1,6 +1,6 @@
 import { Property,Entity,PrimaryKey,ManyToOne,Rel, OneToMany,Cascade,Collection } from "@mikro-orm/core";
 import { BaseEntity } from "../shared/baseEntity.entity.js";
-import { Client } from "../clients/client.entity.js";
+import { User } from "../users/user.entity.js";
 import { OrderItem } from "../orderItems/orderItem.entity.js";
 
 
@@ -22,8 +22,8 @@ export class Order extends BaseEntity {
   @Property({nullable: false})
   metodo_pago?: string
 
-  @ManyToOne(()=> Client, {nullable:false} )
-  client!: Rel<Client>
+  @ManyToOne(()=> User, {nullable:false} )
+  user!: Rel<User>
 
   @OneToMany(()=> OrderItem, orderItem => orderItem.order, {cascade: [Cascade.ALL]})
   orderItems =  new Collection<OrderItem>(this)

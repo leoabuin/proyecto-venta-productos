@@ -1,7 +1,9 @@
 import {z} from 'zod';
 
 const categorySchema = z.object({
-    name: z.string(),
+    name: z.string({
+      message:'La categoria debe ser un string'
+    }),
     description: z.string().optional()
 })
 

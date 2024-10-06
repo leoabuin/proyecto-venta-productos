@@ -3,14 +3,17 @@ import { object, z as zod } from 'zod';
 
 // Esquema de la marca (brand)
 const brandSchema = zod.object({
-  name: zod.string(),
+  name: zod.string().min(1, { message: "El nombre es obligatorio" }),
   description: zod.string(),
   website: zod.string().url({
     message: 'la website debe ser una url',
   }),
   countryOfOrigin: zod.enum([
     'Argentina', 'Brasil', 'China', 'Uruguay', 'Taiwan', 'EEUU', 'Sudafrica', 'Colombia',
-  ])
+  ]),
+  logo: zod.string().url({
+    message: 'No es una URL valida'
+  })
 });
 
 
@@ -22,7 +25,10 @@ const brandToPatch = zod.object({
   }).optional(),
   countryOfOrigin: zod.enum([
     'Argentina', 'Brasil', 'China', 'Uruguay', 'Taiwan', 'EEUU', 'Sudafrica', 'Colombia',
-  ]).optional()
+  ]).optional(),
+  logo: zod.string().url({
+    message: 'No es una URL valida'
+  }).optional()
 
 })
 
@@ -36,7 +42,7 @@ function validateBrand(input: Brand) {
 
 // para el update
 function validateBrandPatch(object: any){
-  return brandToPatch.parse(object)
+  return brandToPatch.safeParse(object)
 }
 
 export { validateBrand, validateBrandPatch};

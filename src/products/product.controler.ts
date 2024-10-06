@@ -4,6 +4,7 @@ import { Product } from './product.entity.js'
 import { Price } from './price.entity.js'
 import { json } from 'stream/consumers'
 import { Brand } from '../brands/brand.entity.js'
+import { validateProduct,validateProductPatch} from './productSchema.js'
 
 
 
@@ -20,6 +21,7 @@ function sanitizeProductInput(req: Request, res: Response, next: NextFunction) {
     prices: req.body.prices,
     brand: req.body.brand,
     category: req.body.category,
+    distributor: req.body.distributor
   }
   //more checks here
 
@@ -52,6 +54,10 @@ async function findOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
+    const result = validateProduct(req.body)
+    if (!result.success) {
+      return res.status(400).json({ errors: result.error.errors });
+    }
     const product = em.create(Product,req.body.sanitizedInput)
     await em.flush()
     res.status(201).json({message:'Product created', data:product})
@@ -61,7 +67,28 @@ async function add(req: Request, res: Response) {
 }
 
 async function update(req: Request, res: Response) {
-  return res.status(500).send({ message: 'Not implementeddfsd'})
+  try {
+    const id = Number.parseInt(req.params.id)
+    const product = await em.findOneOrFail(Product,{id},{populate:['prices']})
+    let productUpdate
+    if (req.method === 'PATCH') {
+      productUpdate = validateProductPatch(req.body)
+      if(!productUpdate.success){
+        return res.status(400).json({ error: JSON.parse(productUpdate.error.message) })
+      }
+    } else {
+      productUpdate = validateProduct(req.body)
+      if (!productUpdate.success) {
+        return res.status(400).json({ error: JSON.parse(productUpdate.error.message) })
+      }
+    }
+    em.assign(product, req.body)
+    await em.flush()
+    res.status(200).json({message: 'product updated',data:product})
+    console.log('updated')
+  } catch (error:any) {
+    res.status(500).json({message: error.message})
+  }
 }
 
 async function remove(req: Request, res: Response) {

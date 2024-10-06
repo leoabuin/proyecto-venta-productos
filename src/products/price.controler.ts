@@ -3,13 +3,12 @@ import { orm } from '../shared/orm.js'
 import { Price } from './price.entity.js'
 import { error } from 'console'
 import { Product } from './product.entity.js'
+import { validatePrice } from './priceSchema.js'
+
 
 
 
 const em = orm.em
-
-
-
 
 
 
@@ -70,6 +69,10 @@ async function addPriceToProduct(req: Request, res: Response) {
   try {
     const idProd = Number.parseInt(req.params.idProduct)
     const product = em.getReference(Product,idProd)
+    const result = validatePrice(req.body)
+    if (!result.success) {
+      return res.status(400).json({ error: JSON.parse(result.error.message) })
+    }
     let newPrice = await em.create(Price,req.body)
     newPrice.product=product
     await em.flush()

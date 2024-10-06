@@ -5,14 +5,35 @@ import { priceRouter } from './products/price.routes.js'
 import { brandRouter } from './brands/brand.routes.js'
 import { orderRouter } from './orders/order.routes.js'
 import { categoryRouter } from './categories/category.routes.js'
-import { clientRouter } from './clients/client.routes.js'
+import { userRouter } from './users/user.routes.js'
 import {distributorRouter} from './distributors/distributors.routes.js'
 import { orm,syncSchema } from './shared/orm.js'
 import { RequestContext } from '@mikro-orm/core'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+
+
+
 
 const app = express()
+app.use(cors())
 app.use(express.json())
+app.use(cookieParser())
 
+/*
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*"); // Permite todas las orígenes
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Métodos permitidos
+
+  // Permite las solicitudes OPTIONS
+  if (req.method === 'OPTIONS') {
+      return res.sendStatus(200);
+  }
+  
+  next();
+});
+*/
 //luego de los middleares base 
 
 app.use((req, res, next) => {
@@ -25,7 +46,7 @@ app.use('/api/products', productRouter)
 app.use('/api/products/prices', priceRouter)
 app.use('/api/prices',priceRouter)
 app.use('/api/brands',brandRouter)
-app.use('/api/clients', clientRouter)
+app.use('/api/users', userRouter)
 app.use('/api/orders',orderRouter)
 app.use('/api/categories', categoryRouter)
 app.use('/api/distributors', distributorRouter)
