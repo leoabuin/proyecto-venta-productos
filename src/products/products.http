@@ -61,3 +61,24 @@ Content-Type: application/json
   "category": 1,
   "distributor": 1
 }
+
+
+### POST
+POST http://localhost:3000/api/products
+Content-Type: application/json
+
+{
+  "name": "Televisor curvo",
+  "description": "Televisor curvo de 50 pulgadas ideal para ver peliculas y deportes en full HD",
+  "waist": "S",
+  "stock": 100,
+  "imagen": "https://tailwindui.com/plus/img/ecommerce-images/category-page-04-image-card-01.jpg",
+  "brand":4,
+  "category": 1,
+  "distributor": 1,
+  "price": {
+    "dateFrom": "2024-10-10T00:00:00.000Z",
+    "dateUntil": "2025-12-31T00:00:00.000Z",
+    "cost": 100000.0
+  }
+}

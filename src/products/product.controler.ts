@@ -59,7 +59,14 @@ async function add(req: Request, res: Response) {
       return res.status(400).json({ errors: result.error.errors });
     }
     const product = em.create(Product,req.body.sanitizedInput)
-    await em.flush()
+    if (req.body.price) {
+      const price = em.create(Price, {
+        ...req.body.price,
+        product, 
+      });
+      await em.persistAndFlush(price);
+    }
+    await em.persistAndFlush(product)
     res.status(201).json({message:'Product created', data:product})
   } catch (error:any) {
       res.status(500).json({message: error.message})
