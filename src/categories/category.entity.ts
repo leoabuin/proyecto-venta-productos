@@ -1,5 +1,5 @@
 import crypto from 'node:crypto'
-import { Property,Entity,PrimaryKey,OneToMany, Collection } from '@mikro-orm/core'
+import { Property,Entity,PrimaryKey,OneToMany, Collection, Unique } from '@mikro-orm/core'
 import { BaseEntity } from '../shared/baseEntity.entity.js'
 import { Product } from '../products/product.entity.js'
 
@@ -11,6 +11,7 @@ export class Category extends BaseEntity{
   id?: number 
 
   @Property({nullable:false})
+  @Unique()
   name?: string
 
   @Property({nullable:true})

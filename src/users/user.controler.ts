@@ -35,7 +35,7 @@ function sanitizeUserInput(req: Request, res: Response, next: NextFunction) {
 }
 
 
-const SECRET_KEY = 'probando_secret_muy_segura_fwefwioefjpe56489e2231##@@';
+const SECRET_KEY = 'probando_secret_muy_segura_fwefwioefjpe5648fgsrgr9e2231##@@';
 
 async function findAll(req: Request, res: Response) {
   try {

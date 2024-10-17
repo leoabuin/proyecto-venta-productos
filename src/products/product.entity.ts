@@ -23,9 +23,6 @@ export class Product extends BaseEntity {
     @Property({nullable:true})
     waist?: string
 
-    @Property({nullable:true})
-    calification!: number
-
     @Property({nullable:false})
     stock!: number
 

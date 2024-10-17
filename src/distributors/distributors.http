@@ -10,12 +10,12 @@ POST http://localhost:3000/api/distributors
 Content-Type: application/json
 
 {
-  "CUIL": 2045845042,
-  "name":"Leonel",
-  "surname":"Abuin",
-  "email": "leoy@gmail.com",
-  "phoneNumber":"3364290054",
-  "address":"Los pinos 2650"
+  "CUIL": 2045845557,
+  "name":"Ezequiel",
+  "surname":"fernandez",
+  "email": "ladaoman@gmail.com",
+  "phoneNumber":"33645890054",
+  "address":"colon 1060"
 }
 
 

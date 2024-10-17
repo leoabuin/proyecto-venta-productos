@@ -11,8 +11,8 @@ Content-Type: application/json
   "waist": "S",
   "calification": 8,
   "stock": 100,
-  "imagen": "https://www.example.com/images/product123.jpg",
-  "brand":1,
+  "imagen": "https://tailwindui.com/plus/img/ecommerce-images/category-page-04-image-card-01.jpg",
+  "brand":4,
   "category": 1,
   "distributor": 1
 }

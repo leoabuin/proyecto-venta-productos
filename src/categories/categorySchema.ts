@@ -3,7 +3,8 @@ import {z} from 'zod';
 const categorySchema = z.object({
     name: z.string({
       message:'La categoria debe ser un string'
-    }),
+    }).min
+    (5, { message: "El nombre debe tener al menos 5 caracteres" }),
     description: z.string().optional()
 })
 
