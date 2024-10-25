@@ -1,25 +1,32 @@
 import { Request, Response, NextFunction } from 'express'
 import { orm } from '../shared/orm.js'
 import { Order } from './order.entity.js'
+import { User } from '../users/user.entity.js'
+import { Product } from '../products/product.entity.js'
+import { OrderItem } from '../orderItems/orderItem.entity.js'
 
 
 
 const em = orm.em
 
-function sanitizeOrderInput(req: Request, res: Response, next: NextFunction) {
-  req.body.sanitizedInput = {
+function sanitizedOrderInput(req: Request, res: Response, next: NextFunction) {
+  req.body.sanitizedOrderInput = {
     fecha_pedido: req.body.fecha_pedido,
     total: req.body.total,
     estado: req.body.estado,
     metodo_pago: req.body.metodo_pago,
-    orderItems: req.body.orderItems,
+    orderItems: req.body.orderItems.map((item: any) => ({
+      productId: item.productId,
+      quantity: item.quantity
+    }))
+
   }
   
   //more checks here
 
-  Object.keys(req.body.sanitizedInput).forEach((key) => {
-    if (req.body.sanitizedInput[key] === undefined) {
-      delete req.body.sanitizedInput[key]
+  Object.keys(req.body.sanitizedOrderInput).forEach((key) => {
+    if (req.body.sanitizedOrderInput[key] === undefined) {
+      delete req.body.sanitizedOrderInput[key]
     }
   })
   next()
@@ -54,9 +61,7 @@ async function add(req: Request, res: Response) {
   }
 }
 
-function update(req: Request, res: Response) {
-  return res.status(401).send({ message: 'funtion not implemented' })
-}
+
 
 async function remove(req: Request, res: Response) {
   try {
@@ -71,11 +76,44 @@ async function remove(req: Request, res: Response) {
 
 
 
-async function placeOrder(req:Request, res: Response) {
-  const {usuarioId, lineasPeido} = req.body;
+async function placeOrder(req:Request, res: Response): Promise<void> {
   try {
-    
+    const userId = Number(req.params.id)
+    const { orderItems} = req.body.sanitizedOrderInput
+    const user = await em.findOne(User, { id: userId })
+    if (!user) {
+      res.status(404).json({ message: 'El usuario no existe' })
+    }
  
+    const order = em.create(Order, {
+      ...req.body.sanitizedOrderInput,
+      user 
+    })
+
+    for (const orderItem of orderItems) {
+      const product = await em.findOneOrFail(Product,{ id: orderItem.productId })
+      console.log('nhhhhhh'+product.name)
+
+      if (product.stock < orderItem.quantity) {
+        res.status(400).json({ message: `El producto ${product.name} no tiene suficiente stock` })
+      }
+
+      //product.stock -= orderItem.quantity
+      //em.persist(product)
+
+      const orderItemEntity = em.create(OrderItem, {
+        order,
+        product,
+        quantity: orderItem.quantity,
+        item_price: 5000
+      })
+      order.orderItems.add(orderItemEntity);
+      em.persist(orderItemEntity)
+      //em.flush()
+    }
+    em.flush()
+    //await em.persistAndFlush(order)
+    res.status(201).json(order);
   } catch (error: any) {
     res.status(500).json({message: error.message})
   }
@@ -94,4 +132,4 @@ async function placeOrder(req:Request, res: Response) {
 
 
 
-export { sanitizeOrderInput, findAll, findOne, add, update, remove, placeOrder}
+export { sanitizedOrderInput, findAll, findOne, add, remove, placeOrder}

@@ -57,6 +57,9 @@ async function update(req: Request, res: Response) {
     const id = Number.parseInt(req.params.id)
     const category = await em.findOneOrFail(Category,{id})
     let categoryUpdate = validateCategory(req.body)
+    if(!categoryUpdate.success){
+      return res.status(400).json({ error: JSON.parse(categoryUpdate.error.message) })
+    }
     em.assign(category, req.body)
     await em.flush()
     res.status(200).json({message: 'category updated',data:category})

@@ -30,4 +30,3 @@ export class Order extends BaseEntity {
  
 }
 
-// DEPENDENCIA CIRCULAR ENTRE Order Y OrderItem

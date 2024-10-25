@@ -10,10 +10,10 @@ export class OrderItem {
     order!:Rel<Order>
 
     @ManyToOne(()=> Product, {primary:true})
-    product!:Product
+    product!:Rel<Product>
 
     @Property({nullable:false})
-    quantity?: number
+    quantity!: number
 
     @Property({nullable:false})
     item_price?: number
