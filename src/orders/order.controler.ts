@@ -15,10 +15,10 @@ function sanitizedOrderInput(req: Request, res: Response, next: NextFunction) {
     total: req.body.total,
     estado: req.body.estado,
     metodo_pago: req.body.metodo_pago,
-    orderItems: req.body.orderItems.map((item: any) => ({
+    orderItems: Array.isArray(req.body.orderItems) ? req.body.orderItems.map((item: any) => ({
       productId: item.productId,
       quantity: item.quantity
-    }))
+    })) : [],
 
   }
   
@@ -78,7 +78,7 @@ async function remove(req: Request, res: Response) {
 
 async function placeOrder(req:Request, res: Response): Promise<void> {
   try {
-    const userId = Number(req.params.id)
+    const userId = Number(req.body.userId)
     const { orderItems} = req.body.sanitizedOrderInput
     const user = await em.findOne(User, { id: userId })
     if (!user) {
@@ -90,29 +90,43 @@ async function placeOrder(req:Request, res: Response): Promise<void> {
       user 
     })
 
-    for (const orderItem of orderItems) {
-      const product = await em.findOneOrFail(Product,{ id: orderItem.productId })
+    for (const item of orderItems) {
+      const product = await em.findOneOrFail(Product,{ id: item.productId })
       console.log('nhhhhhh'+product.name)
 
-      if (product.stock < orderItem.quantity) {
+      if (product.stock < item.quantity) {
         res.status(400).json({ message: `El producto ${product.name} no tiene suficiente stock` })
       }
 
-      //product.stock -= orderItem.quantity
+      product.stock -= item.quantity
+      console.log(product.stock)
       //em.persist(product)
-
+      /*
       const orderItemEntity = em.create(OrderItem, {
         order,
         product,
         quantity: orderItem.quantity,
         item_price: 5000
       })
-      order.orderItems.add(orderItemEntity);
-      em.persist(orderItemEntity)
+      console.log('HOLA')
+      */
+
+
+      const orderItem = new OrderItem();
+      orderItem.order = order; 
+      console.log(orderItem.order.metodo_pago)
+      orderItem.product = product;
+      console.log(orderItem.product.description)
+      orderItem.quantity = item.quantity;
+      orderItem.item_price = 5000;
+
+      order.orderItems.add(orderItem);
+      //em.persist(orderItem)
+      //em.persist(product)
       //em.flush()
     }
-    em.flush()
-    //await em.persistAndFlush(order)
+    await em.flush()
+   // await em.persistAndFlush(order)
     res.status(201).json(order);
   } catch (error: any) {
     res.status(500).json({message: error.message})

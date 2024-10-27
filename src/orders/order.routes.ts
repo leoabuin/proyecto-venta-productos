@@ -6,6 +6,6 @@ export const orderRouter = Router()
 
 orderRouter.get('/', findAll)
 orderRouter.get('/:id', findOne)
-orderRouter.post('/', sanitizedOrderInput, add)
+//orderRouter.post('/', sanitizedOrderInput, add)
 orderRouter.delete('/:id', remove)
-orderRouter.post('/:id',sanitizedOrderInput,placeOrder )
+orderRouter.post('/',sanitizedOrderInput,placeOrder )

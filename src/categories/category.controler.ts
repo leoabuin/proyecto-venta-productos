@@ -60,7 +60,10 @@ async function update(req: Request, res: Response) {
     if(!categoryUpdate.success){
       return res.status(400).json({ error: JSON.parse(categoryUpdate.error.message) })
     }
-    em.assign(category, req.body)
+    em.assign(category, {
+      name: req.body.name,
+      description: req.body.description,
+    });
     await em.flush()
     res.status(200).json({message: 'category updated',data:category})
     console.log('updated')

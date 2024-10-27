@@ -67,6 +67,7 @@ async function remove(req: Request, res: Response) {
 
 async function addPriceToProduct(req: Request, res: Response) {
   try {
+   // const idProd = Number.parseInt(req.body.idProduct)
     const idProd = Number.parseInt(req.params.idProduct)
     const product = em.getReference(Product,idProd)
     const result = validatePrice(req.body)

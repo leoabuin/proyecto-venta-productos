@@ -4,16 +4,16 @@ GET http://localhost:3000/api/orders
 
 
 ### realizar un nuevo pedido
-POST http://localhost:3000/api/orders/2
+POST http://localhost:3000/api/orders
 Content-Type: application/json
 
 {
     "orderItems": [
-      { "productId": 11, "quantity": 2 },
-      { "productId": 12, "quantity": 2 }
+      { "productId": 11, "quantity": 2 }
     ],
     "fecha_pedido": "2024-10-23T00:00:00Z",
     "total": 500.0,
     "estado": "pending",
-    "metodo_pago": "credit_card"
+    "metodo_pago": "credit_card",
+    "userId": 2
 }
