@@ -118,13 +118,13 @@ async function logIn(req: Request, res: Response){
     const { userName, password } = req.body;
     const user = await em.findOne(User, { userName });
     if (!user) {
-      return res.status(404).json({ message: 'User name does not exist' });
+      return res.status(404).json({ message: 'El nombre de usuario no existe' });
     }
     if (!user.password) {
-      return res.status(401).json({ message: 'Invalid password' });
+      return res.status(401).json({ message: 'Contraseña invalida' });
     }
     const isValid = await bcrypt.compare(password, user.password)
-    if(!isValid) throw new Error('password is invalid')
+    if(!isValid) throw new Error('la contraseña es invalida')
     const { password: _, ...userResponse } = user;
     const token = jwt.sign(
         { 
@@ -135,7 +135,7 @@ async function logIn(req: Request, res: Response){
         SECRET_KEY,
         { expiresIn: '1h' });
     console.log('Token generated:', token);
-    res.cookie('token', token, { httpOnly: true, secure: true });
+    res.cookie('token', token, { httpOnly: true, secure: false });
     console.log('Login successful');
     return res.status(200).json({ message: 'Login successful', data: userResponse });
     
@@ -145,5 +145,6 @@ async function logIn(req: Request, res: Response){
   }
 
 }
+
 
 export { sanitizeUserInput, findAll, findOne, add, update, remove, logIn, SECRET_KEY }
