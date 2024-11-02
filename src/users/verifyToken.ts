@@ -5,17 +5,16 @@ import { SECRET_KEY } from "./user.controler.js";
 
 
 export function authenticateToken(req: any, res: Response, next: NextFunction) {
-    const token = req.cookies.token; // Obtener el token de la cookie
-  
+    const token = req.cookies.token
+    console.log('Token generated:', token)
     if (!token) {
-      return res.sendStatus(401) // No autorizado
+      return res.sendStatus(401)
     }
-  
     jwt.verify(token, SECRET_KEY, (err:any, user: any) => {
       if (err) {
-        return res.sendStatus(403); // Prohibido
+        return res.sendStatus(403)
       }
-      req.user = user // Almacenar el usuario en la solicitud
+      req.user = user
       next()
     });
   }

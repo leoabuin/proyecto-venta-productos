@@ -9,7 +9,7 @@ import { OrderItem } from '../orderItems/orderItem.entity.js'
 
 const em = orm.em
 
-function sanitizedOrderInput(req: Request, res: Response, next: NextFunction) {
+function sanitizeOrderInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedOrderInput = {
     fecha_pedido: req.body.fecha_pedido,
     total: req.body.total,
@@ -18,9 +18,10 @@ function sanitizedOrderInput(req: Request, res: Response, next: NextFunction) {
     orderItems: Array.isArray(req.body.orderItems) ? req.body.orderItems.map((item: any) => ({
       productId: item.productId,
       quantity: item.quantity
-    })) : [],
+    })) : [] 
+  };
 
-  }
+  console.dir(req.body.sanitizedOrderInput.orderItems, { depth: 5 });
   
   //more checks here
 
@@ -78,6 +79,7 @@ async function remove(req: Request, res: Response) {
 
 async function placeOrder(req:Request, res: Response): Promise<void> {
   try {
+    console.dir(req.body.sanitizedOrderInput.orderItem,{depth:5})
     const userId = Number(req.body.userId)
     const { orderItems} = req.body.sanitizedOrderInput
     const user = await em.findOne(User, { id: userId })
@@ -92,7 +94,7 @@ async function placeOrder(req:Request, res: Response): Promise<void> {
 
     for (const item of orderItems) {
       const product = await em.findOneOrFail(Product,{ id: item.productId })
-      console.log('nhhhhhh'+product.name)
+      console.log('probando: ' + product.name)
 
       if (product.stock < item.quantity) {
         res.status(400).json({ message: `El producto ${product.name} no tiene suficiente stock` })
@@ -116,15 +118,16 @@ async function placeOrder(req:Request, res: Response): Promise<void> {
       orderItem.order = order; 
       console.log(orderItem.order.metodo_pago)
       orderItem.product = product;
-      console.log(orderItem.product.description)
+      console.log(orderItem.product.id)
       orderItem.quantity = item.quantity;
       orderItem.item_price = 5000;
-
-      order.orderItems.add(orderItem);
+     // console.dir(orderItem,{depth:5})
+      //order.orderItems.add(orderItem);
       //em.persist(orderItem)
       //em.persist(product)
       //em.flush()
     }
+    //console.dir(order,{depth:5})
     await em.flush()
    // await em.persistAndFlush(order)
     res.status(201).json(order);
@@ -146,4 +149,4 @@ async function placeOrder(req:Request, res: Response): Promise<void> {
 
 
 
-export { sanitizedOrderInput, findAll, findOne, add, remove, placeOrder}
+export { sanitizeOrderInput , findAll, findOne, add, remove, placeOrder}

@@ -147,4 +147,13 @@ async function logIn(req: Request, res: Response){
 }
 
 
-export { sanitizeUserInput, findAll, findOne, add, update, remove, logIn, SECRET_KEY }
+async function logOut(req: Request, res: Response) {
+  try {
+    res.clearCookie('token', { httpOnly: true, secure: false });
+    return res.status(200).json({ message: 'Cierre de sesion exitoso' });
+  } catch (error: any) {
+    res.status(500).json({message: error.message})
+  }
+}
+
+export { sanitizeUserInput, findAll, findOne, add, update, remove, logIn,logOut, SECRET_KEY }
