@@ -6,10 +6,10 @@ import { Product } from "../products/product.entity.js";
 @Entity()
 export class OrderItem {
   
-    @ManyToOne(()=> Order,{primary:true})
+    @ManyToOne(()=> Order,{nullable:false,primary:true })
     order!:Rel<Order>
 
-    @ManyToOne(()=> Product, {primary:true})
+    @ManyToOne(()=> Product, {nullable:false,primary:true})
     product!:Rel<Product>
 
     @Property({nullable:false})

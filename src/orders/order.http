@@ -9,8 +9,8 @@ Content-Type: application/json
 
 {
     "orderItems": [
-      { "productId": 11, "quantity": 2 },
-     { "productId": 12, "quantity": 2 }
+      { "productId": 11, "quantity": 2, "item_price":5000 },
+      { "productId": 12, "quantity": 2, "item_price":7000 }
     ],
     "fecha_pedido": "2024-10-23T00:00:00Z",
     "total": 500.0,
@@ -26,11 +26,11 @@ Content-Type: application/json
 
 {
     "orderItems": [
-      { "productId": 11, "quantity": 2 }
+      { "productId": 11, "quantity": 2, "item_price":7000 }
     ],
     "fecha_pedido": "2024-10-23T00:00:00Z",
     "total": 500.0,
     "estado": "pending",
-    "metodo_pago": "credit_card",
+    "metodo_pago": "Debit_card",
     "userId": 2
 }

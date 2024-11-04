@@ -8,15 +8,15 @@ POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-  "dni": 12456784,
+  "dni": 44290906,
   "name": "Leonel",
   "surname": "Abuin",
-  "mail": "lafsewabuin2002@gmail.com",
+  "mail": "leonelabuin2002@gmail.com",
   "phoneNumber": "3364290054",
   "adress": "Los pinos 2650",
   "rol": "Cliente",
-  "userName": "JbVeronnns25",
-  "password": "Delpotrosdfasf50"
+  "userName": "LeoAbuin2002",
+  "password": "LeoAbuin2002!"
 }
 
 

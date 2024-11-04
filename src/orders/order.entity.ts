@@ -25,7 +25,7 @@ export class Order extends BaseEntity {
   @ManyToOne(()=> User, {nullable:false} )
   user!: Rel<User>
 
-  @OneToMany(()=> OrderItem, orderItem => orderItem.order, {cascade: [Cascade.ALL]})
+  @OneToMany(()=> OrderItem, orderItem => orderItem.order, {cascade: [Cascade.ALL] , orphanRemoval: true })
   orderItems =  new Collection<OrderItem>(this)
  
 }
