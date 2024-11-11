@@ -54,6 +54,27 @@ async function findOne(req: Request, res: Response) {
   }
 }
 
+async function findOrderbyUser(req: Request, res: Response) {
+  const userId = Number.parseInt(req.params.idUser)
+
+  if (isNaN(userId)) {
+    return res.status(400).json({ error: 'El ID del usuario no es válido' })
+  }
+  try {
+    const orders = await em.find(Order, {
+      user: { id: userId }
+    }, {
+      populate: ['orderItems'] 
+    })
+    res.json(orders)
+  } catch (error) {
+    console.error('Error al buscar las órdenes del usuario:', error)
+    res.status(500).json({ error: 'Error al buscar las órdenes del usuario' })
+  }
+}
+
+
+
 async function add(req: Request, res: Response) {
   try {
     const order = em.create(Order,req.body.sanitizedInput)
@@ -95,7 +116,7 @@ async function placeOrder(req:Request, res: Response): Promise<void> {
     console.log('order item')
     console.dir(orderItems,{depth:5})
     
-    // for (const item of orderItems) {
+
       const orderItemPromise = orderItems.map(async (item: any) => {
         const product = await em.findOne(Product, { id: item.productId });
         if (!product) {
@@ -104,7 +125,7 @@ async function placeOrder(req:Request, res: Response): Promise<void> {
   
         console.log('probando: ' + product.name);
   
-        // Verificar stock
+
         if (product.stock < item.quantity) {
           throw new Error(`El producto ${product.name} no tiene suficiente stock`);
         }
@@ -112,158 +133,85 @@ async function placeOrder(req:Request, res: Response): Promise<void> {
         product.stock -= item.quantity;
   
         const orderItem = new OrderItem();
-        orderItem.order = order; // Relacionar el item con la orden
-        orderItem.product = product; // Relacionar el producto con el item
+        orderItem.order = order; 
+        orderItem.product = product; 
         orderItem.quantity = item.quantity;
-        orderItem.item_price = item.item_price // Aquí puedes ajustar según corresponda
+        orderItem.item_price = item.item_price
 
   
-        console.dir(orderItem, { depth: 5 });
+        console.dir(orderItem, { depth: 5 })
   
-        return orderItem;
-      });
+        return orderItem
+      })
   
-      // Esperar a que todos los items se procesen correctamente
       const processedOrderItems = await Promise.all(orderItemPromise);
       console.log(processedOrderItems)
   
       processedOrderItems.forEach(item => {
-        if (item) { // Asegúrate de que el item no sea undefined
-          order.orderItems.add(item);
+        if (item) { 
+          order.orderItems.add(item)
         }
-      });
+      })
+
+      console.log("PROBANDOOOO:",order)
   
-      // Eliminar OrderItem sin producto
-      const orderItemsToRemove = order.orderItems.filter(item => !item.product);
+
+      const orderItemsToRemove = order.orderItems.filter(item => !item.product)
       orderItemsToRemove.forEach(item => {
-        order.orderItems.remove(item); // Elimina el item de la colección
-      });
+        order.orderItems.remove(item)
+      })
+     // order.orderItems=processedOrderItems;
 
       console.log(order)
   
-      // Guardar cambios en la base de datos
-      await em.flush();
-  
-  //em.flush()
-  /*
-      const product = await em.findOneOrFail(Product,{ id: item.productId })
-      console.log('probando: ' + product.name)
 
-      if (product.stock < item.quantity) {
-        res.status(400).json({ message: `El producto ${product.name} no tiene suficiente stock` })
-      }
-        */
-
-     // product.stock -= item.quantity
-     // console.log(product.stock)
-      //em.persist(product)
-      /*
-      const orderItemEntity = em.create(OrderItem, {
-        order,
-        product,
-        quantity: orderItem.quantity,
-        item_price: 5000
-      })
-      console.log('HOLA')
-      
-      */
-/*
-      const orderItem = new OrderItem();
-      orderItem.order = order; 
-      console.log(orderItem.order.metodo_pago)
-      orderItem.product = product;
-      console.log(orderItem.product.id)
-      orderItem.quantity = item.quantity;
-      orderItem.item_price = 5000;
-      */
-     // console.dir(orderItem,{depth:5})
-      //order.orderItems.add(orderItem);
-      //em.persist(orderItem)
-      //em.persist(product)
-      //em.flush()
-    //console.dir(orderItem,{depth:5})
-    
-    
-
-
-    //console.dir(order,{depth:5})
-   // await em.persistAndFlush(order)
-    res.status(201).json(order);
+      await em.flush()
+    res.status(201).json(order)
   } catch (error: any) {
     res.status(500).json({message: error.message})
   }
   
 } 
 
-/*
-async function placeOrder(req: Request, res: Response): Promise<void> {
-  try {
-    const userId = Number(req.body.userId);
-    const { orderItems } = req.body.sanitizedOrderInput;
 
-    // Buscar al usuario
-    const user = await em.findOne(User, { id: userId });
-    if (!user) {
-       res.status(404).json({ message: 'El usuario no existe' }); // Agregar return aquí
+
+async function cancelOrder(req:Request, res:Response){
+  try {
+    const idOrder = Number.parseInt(req.params.idOrder)
+    const order = await em.findOne(Order, idOrder,{ populate: ['orderItems'] }) 
+
+    if (!order) {
+      return res.status(404).json({ message: `La orden con ID ${idOrder} no existe.` });
     }
 
-    // Crear una nueva orden
-    const order = em.create(Order, {
-      ...req.body.sanitizedOrderInput,
-      user,
-    });
+    if (order.estado !== 'pending') {
+      return res.status(400).json({ message: `El pedido nro ${order.id} no se puede cancelar porque no está en estado Pending.` });
+    }
 
-    // Procesar los items del pedido
-    const orderItemPromises = orderItems.map(async (item: any) => {
-      // Buscar el producto
-      const product = await em.findOne(Product, { id: item.productId });
-      if (!product) {
-        throw new Error(`Producto con id ${item.productId} no encontrado`);
-      }
+    order.estado = 'Cancelado'
 
-      console.log('Producto encontrado: ' + product.name);
 
-      // Verificar el stock del producto
-      if (product.stock < item.quantity) {
-        throw new Error(`El producto ${product.name} no tiene suficiente stock`);
-      }
+for (const orderItem of order.orderItems.getItems()) {
+  const productId = orderItem.product?.id
 
-      // Reducir el stock del producto
-      product.stock -= item.quantity;
-
-      // Persistir el cambio de stock
-     await em.persistAndFlush(product); // Persistir el cambio de stock
-
-      // Crear el OrderItem
-      const orderItem = em.create(OrderItem, {
-        order, // Relacionar el item con la orden
-        product, // Relacionar el producto con el item
-        quantity: item.quantity,
-        item_price: item.item_price, // Establecer el precio del producto
-      });
-
-      console.dir(orderItem, { depth: 5 });
-
-      return orderItem;
-    });
-
-    // Esperar a que todos los items se procesen correctamente
-    const processedOrderItems = await Promise.all(orderItemPromises);
-
-    // Agregar los items procesados a la orden
-    processedOrderItems.forEach(item => order.orderItems.add(item)); // Cambiar aquí
-
-    await em.persistAndFlush(order);
-    //await em.flush(); // Guardar la orden, que a su vez guarda los items
-
-    // Responder con éxito
-    res.status(201).json(order);
-  } catch (error: any) {
-    console.error(error);
-    res.status(500).json({ message: error.message });
+  if (productId) { 
+    const product = await em.findOne(Product, productId);
+    
+    if (product) {
+      product.stock += orderItem.quantity
+      await em.persistAndFlush(product)
+      return res.status(200).json({ message: `El pedido nro ${order.id} ha sido cancelado exitosamente.` })
+    }
+  } else {
+    console.error(`El producto del orderItem no tiene un id válido.`);
   }
 }
-*/
+    
+  } catch (error:any) {
+    return res.status(500).json({ message: `Error al cancelar la orden: ${error.message}` });
+  }
+
+}
 
 
 
@@ -281,4 +229,4 @@ async function placeOrder(req: Request, res: Response): Promise<void> {
 
 
 
-export { sanitizeOrderInput , findAll, findOne, add, remove, placeOrder}
+export { sanitizeOrderInput , findAll, findOne, add, remove, placeOrder, findOrderbyUser, cancelOrder}

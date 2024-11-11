@@ -26,7 +26,8 @@ Content-Type: application/json
 
 {
     "orderItems": [
-      { "productId": 11, "quantity": 2, "item_price":7000 }
+      { "productId": 14, "quantity": 2, "item_price":7000 },
+      { "productId": 12, "quantity": 2, "item_price":9000 }
     ],
     "fecha_pedido": "2024-10-23T00:00:00Z",
     "total": 500.0,
@@ -34,3 +35,10 @@ Content-Type: application/json
     "metodo_pago": "Debit_card",
     "userId": 2
 }
+
+###OBTENER TODOS LOS PEDIDOS
+GET http://localhost:3000/api/orders/8
+
+
+###OBTENER TODOS LOS PEDIDOS
+POST http://localhost:3000/api/orders/100
