@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { sanitizeBrandInput,findAll, findOne, add, update,remove } from "./brand.controler.js";
 import { productControler } from "../products/product.controler.js";
+import { authenticateToken } from "../users/verifyToken.js";
 
 
 export const brandRouter = Router()

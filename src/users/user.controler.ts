@@ -48,8 +48,8 @@ async function findAll(req: Request, res: Response) {
 
 async function findOne(req: Request, res: Response) {
   try {
-    const dni = Number.parseInt(req.params.dni)
-    const user = await em.findOneOrFail(User,{dni},{populate:['orders']})
+    const id = Number.parseInt(req.params.id)
+    const user = await em.findOneOrFail(User,{id},{populate:['orders']})
     res.status(200).json({message:'found User',data:user})
   } catch (error: any) {
     return res.status(500).json({message: error.message})
@@ -74,8 +74,8 @@ async function add(req: Request, res: Response) {
 
 async function update(req: Request, res: Response) {
   try{
-    const dni = Number.parseInt(req.params.dni)
-    const user = await em.findOneOrFail(User, {dni})
+    const id = Number.parseInt(req.params.id)
+    const user = await em.findOneOrFail(User, {id})
     let userUpdate
     if (req.method === 'PATCH') {
       userUpdate = validateUserPatch(req.body)
@@ -135,7 +135,7 @@ async function logIn(req: Request, res: Response){
         SECRET_KEY,
         { expiresIn: '1h' });
     console.log('Token generated:', token);
-    res.cookie('token', token, { httpOnly: true, secure: false });
+    res.cookie('token', token, { secure: false });
     console.log('Login successful');
     return res.status(200).json({ message: 'Login successful', data: userResponse });
     
@@ -150,6 +150,7 @@ async function logIn(req: Request, res: Response){
 async function logOut(req: Request, res: Response) {
   try {
     res.clearCookie('token', { httpOnly: true, secure: false });
+    console.log('Cookie "token" eliminada:', !req.cookies.token);
     return res.status(200).json({ message: 'Cierre de sesion exitoso' });
   } catch (error: any) {
     res.status(500).json({message: error.message})

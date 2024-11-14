@@ -6,10 +6,10 @@ import { authenticateToken } from "./verifyToken.js";
 export const userRouter = Router()
 
 userRouter.get('/', findAll)
-userRouter.get('/:dni', findOne)
+userRouter.get('/:id', findOne)
 userRouter.post('/', sanitizeUserInput, add)
 userRouter.put('/:dni',authenticateToken, update)
-userRouter.patch('/:dni',authenticateToken, update)
+userRouter.patch('/:id', update)
 userRouter.delete('/:id', remove)
 userRouter.post('/logIn',logIn)
 userRouter.post('/logOut',logOut)

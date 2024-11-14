@@ -11,12 +11,15 @@ import { orm,syncSchema } from './shared/orm.js'
 import { RequestContext } from '@mikro-orm/core'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-
+import { authenticateToken } from './users/verifyToken.js'
 
 
 
 const app = express()
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:4200', // Especifica el origen del frontend
+  credentials: true, // Permitir que se envíen credenciales (cookies, cabeceras de autenticación)
+}));
 app.use(express.json())
 app.use(cookieParser())
 
@@ -54,6 +57,7 @@ app.use('/api/distributors', distributorRouter)
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' })
 })
+
 
 await syncSchema()  //nunca en produccion
 
