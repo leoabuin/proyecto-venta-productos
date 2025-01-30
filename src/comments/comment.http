@@ -1,0 +1,17 @@
+###OBTENER LOS COMENTARIOS
+GET http://localhost:3000/api/comments
+
+
+
+### Añadir un comentario
+POST http://localhost:3000/api/comments
+Content-Type: application/json
+
+{
+    "comment": "Excelente producto",
+    "productId": 1,
+    "userId": 1
+}
+
+### buscar comentsrios por producto
+GET http://localhost:3000/api/comments/1

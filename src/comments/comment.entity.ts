@@ -12,7 +12,7 @@ export class Comment extends BaseEntity{
 @Property({nullable: false})
 comment?: string
 
-@Property({nullable: false})
+@Property({ defaultRaw: "CURRENT_TIMESTAMP" })
 date?: Date
 
 @ManyToOne(()=> User, {nullable:false, onDelete:'CASCADE'} )

@@ -12,6 +12,7 @@ import { RequestContext } from '@mikro-orm/core'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { authenticateToken } from './users/verifyToken.js'
+import { commentRouter } from './comments/comment.routes.js'
 
 
 
@@ -53,6 +54,7 @@ app.use('/api/users', userRouter)
 app.use('/api/orders',orderRouter)
 app.use('/api/categories', categoryRouter)
 app.use('/api/distributors', distributorRouter)
+app.use('/api/comments',commentRouter)
 
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' })

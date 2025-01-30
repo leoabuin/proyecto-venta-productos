@@ -130,6 +130,7 @@ async function logIn(req: Request, res: Response){
         { 
           id:user.id,
           userName: user.userName,
+          rol: user.rol, 
           mail: user.mail
         }, 
         SECRET_KEY,
