@@ -24,7 +24,7 @@ Content-Type: application/json
 ### buscar un cliente 
 
 ### obtener un producto
-GET http://localhost:3000/api/users/44444444
+GET http://localhost:3000/api/users/2
 
 
 

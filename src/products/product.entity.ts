@@ -6,6 +6,7 @@ import { BaseEntity } from '../shared/baseEntity.entity.js'
 import { Brand } from '../brands/brand.entity.js'
 import { Category } from '../categories/category.entity.js'
 import { Distributor } from '../distributors/distributor.entity.js'
+import { Comment } from '../comments/comment.entity.js'
 
 
 @Entity()
@@ -40,5 +41,8 @@ export class Product extends BaseEntity {
 
     @ManyToOne(()=> Distributor, {nullable:false})
     distributor!:Distributor
+
+    @OneToMany(()=> Comment, comment => comment.product, {cascade: [Cascade.ALL]})
+    comments = new Collection<Comment>(this)
   
 }

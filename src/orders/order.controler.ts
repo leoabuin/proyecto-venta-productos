@@ -152,10 +152,7 @@ async function placeOrder(req:Request, res: Response): Promise<void> {
           order.orderItems.add(item)
         }
       })
-
-      console.log("PROBANDOOOO:",order)
   
-
       const orderItemsToRemove = order.orderItems.filter(item => !item.product)
       orderItemsToRemove.forEach(item => {
         order.orderItems.remove(item)
@@ -214,17 +211,6 @@ for (const orderItem of order.orderItems.getItems()) {
 }
 
 
-
-
-
-/*
-  1) cliente puede agregar producto a su carrito con su cantidad (lineas de pedido)
-  2) cuando el cliente decide finalizar su pedido, presiona finalizar pedido
-  nota: en que momento se crea el pedido. 
-  nota: en que momento se crea la linea de pedido
-
-
-*/
 
 
 
