@@ -107,7 +107,15 @@ async function placeOrder(req:Request, res: Response): Promise<void> {
     const user = await em.findOne(User, { id: userId })
     if (!user) {
       res.status(404).json({ message: 'El usuario no existe' })
+      return
     }
+
+    // Nos aseguramos que un empleado no pueda hacer un pedido
+    if (user.rol === 'Empleado') {
+      res.status(403).json({ message: 'Acceso denegado: Los empleados no pueden realizar compras.' })
+      return
+    }
+
  
     const order = em.create(Order, {
       ...req.body.sanitizedOrderInput,

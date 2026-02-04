@@ -1,4 +1,5 @@
 import 'reflect-metadata'
+import 'dotenv/config'
 import express from 'express'
 import { productRouter } from './products/product.routes.js'
 import { priceRouter } from './products/price.routes.js'
@@ -13,6 +14,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { authenticateToken } from './users/verifyToken.js'
 import { commentRouter } from './comments/comment.routes.js'
+import { genderRouter } from './gender/gender.routes.js'
 
 
 
@@ -55,6 +57,7 @@ app.use('/api/orders',orderRouter)
 app.use('/api/categories', categoryRouter)
 app.use('/api/distributors', distributorRouter)
 app.use('/api/comments',commentRouter)
+app.use('/api/genders', genderRouter)
 
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' })

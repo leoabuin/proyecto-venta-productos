@@ -18,10 +18,12 @@ function sanitizeProductInput(req: Request, res: Response, next: NextFunction) {
     calification: req.body.calification,
     imagen: req.body.imagen,
     stock: req.body.stock,
+    isOffer: req.body.isOffer,
     prices: req.body.prices,
     brand: req.body.brand,
     category: req.body.category,
-    distributor: req.body.distributor
+    distributor: req.body.distributor,
+    gender: req.body.gender
   }
   //more checks here
 
@@ -79,17 +81,17 @@ async function update(req: Request, res: Response) {
     const product = await em.findOneOrFail(Product,{id},{populate:['prices']})
     let productUpdate
     if (req.method === 'PATCH') {
-      productUpdate = validateProductPatch(req.body)
+      productUpdate = validateProductPatch(req.body.sanitizeProductInput)
       if(!productUpdate.success){
         return res.status(400).json({ error: JSON.parse(productUpdate.error.message) })
       }
     } else {
-      productUpdate = validateProduct(req.body)
+      productUpdate = validateProduct(req.body.sanitizeProductInput)
       if (!productUpdate.success) {
         return res.status(400).json({ error: JSON.parse(productUpdate.error.message) })
       }
     }
-    em.assign(product, req.body)
+    em.assign(product, req.body.sanitizeProductInput)
     await em.flush()
     res.status(200).json({message: 'product updated',data:product})
     console.log('updated')
@@ -123,4 +125,19 @@ async function addProductToBrand(req: Request, res: Response) {
   
 }
 
-export const productControler = { sanitizeProductInput, findAll, findOne, add, update, remove, addProductToBrand }
+async function toggleOffer(req: Request, res: Response) {
+  try {
+    const id = Number.parseInt(req.params.id);
+    const product = await em.findOneOrFail(Product, { id });
+
+    // Aquí no validamos nombre ni talle, solo cambiamos el booleano
+    product.isOffer = req.body.isOffer;
+
+    await em.flush();
+    res.status(200).json({ message: 'Estado de oferta actualizado', data: product });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export const productControler = { sanitizeProductInput, findAll, findOne, add, update, remove, addProductToBrand, toggleOffer }

@@ -12,3 +12,4 @@ productRouter.post('/',productControler.sanitizeProductInput, productControler.a
 productRouter.put('/:id', productControler.update)
 productRouter.patch('/:id', productControler.update)
 productRouter.delete('/:id', productControler.remove)
+productRouter.patch('/:id/toggle-offer', productControler.toggleOffer);

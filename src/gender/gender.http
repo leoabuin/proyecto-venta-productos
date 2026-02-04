@@ -1,0 +1,32 @@
+### Cargar Género Masculino
+POST http://localhost:3000/api/genders
+Content-Type: application/json
+
+{
+  "name": "Masculino"
+}
+
+
+### Cargar Género Femenino
+POST http://localhost:3000/api/genders
+Content-Type: application/json
+
+{
+  "name": "Femenino"
+}
+
+### Cargar Género Unisex
+POST http://localhost:3000/api/genders
+Content-Type: application/json
+
+{
+  "name": "Unisex"
+}
+
+### Cargar Género Niños
+POST http://localhost:3000/api/genders
+Content-Type: application/json
+
+{
+  "name": "Niños"
+}
