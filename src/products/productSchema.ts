@@ -6,7 +6,8 @@ const productSchema = z.object({
     waist: z.enum(['S', 'M', 'L', 'XL', 'XXL'], { message: "La talla debe ser una de las siguientes: S, M, L, XL, XXL" }), // Validar valores permitidos para la talla
     stock: z.number().int().nonnegative({ message: "El stock debe ser un número entero no negativo" }), // Validar que sea un entero no negativo
     imagen: z.string().url({ message: "Debe ser una URL válida para la imagen" }), // Validar que sea una URL
-    isOffer: z.boolean()
+    isOffer: z.boolean(),
+    isContinued: z.boolean().optional().default(true)
 })
 
 
@@ -16,7 +17,8 @@ const productSchemaPatch = z.object({
     waist: z.enum(['S', 'M', 'L', 'XL', 'XXL'], { message: "La talla debe ser una de las siguientes: S, M, L, XL, XXL" }).optional(), 
     stock: z.number().int().nonnegative({ message: "El stock debe ser un número entero no negativo" }).optional(), 
     imagen: z.string().url({ message: "Debe ser una URL válida para la imagen" }).optional(),
-    isOffer: z.boolean().optional().default(false)
+    isOffer: z.boolean().optional().default(false),
+    isContinued: z.boolean().optional().default(true)
 })
 
 function validateProduct(object: any){

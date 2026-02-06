@@ -19,6 +19,7 @@ function sanitizeProductInput(req: Request, res: Response, next: NextFunction) {
     imagen: req.body.imagen,
     stock: req.body.stock,
     isOffer: req.body.isOffer,
+    isContinued: req.body.isContinued,
     prices: req.body.prices,
     brand: req.body.brand,
     category: req.body.category,
@@ -81,17 +82,17 @@ async function update(req: Request, res: Response) {
     const product = await em.findOneOrFail(Product,{id},{populate:['prices']})
     let productUpdate
     if (req.method === 'PATCH') {
-      productUpdate = validateProductPatch(req.body.sanitizeProductInput)
+      productUpdate = validateProductPatch(req.body.sanitizedInput)
       if(!productUpdate.success){
         return res.status(400).json({ error: JSON.parse(productUpdate.error.message) })
       }
     } else {
-      productUpdate = validateProduct(req.body.sanitizeProductInput)
+      productUpdate = validateProduct(req.body.sanitizedInput)
       if (!productUpdate.success) {
         return res.status(400).json({ error: JSON.parse(productUpdate.error.message) })
       }
     }
-    em.assign(product, req.body.sanitizeProductInput)
+    em.assign(product, req.body.sanitizedInput)
     await em.flush()
     res.status(200).json({message: 'product updated',data:product})
     console.log('updated')

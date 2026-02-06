@@ -47,7 +47,10 @@ export class Product extends BaseEntity {
     gender!:Gender
 
     @Property({default:false})
-    isOffer: boolean = false;
+    isOffer: boolean = false
+
+    @Property({default:true})
+    isContinued: boolean = true
 
     @OneToMany(()=> Comment, comment => comment.product, {cascade: [Cascade.ALL]})
     comments = new Collection<Comment>(this)

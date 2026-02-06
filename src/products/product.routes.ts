@@ -10,6 +10,6 @@ productRouter.get('/', productControler.findAll)
 productRouter.get('/:id', productControler.findOne)
 productRouter.post('/',productControler.sanitizeProductInput, productControler.add)
 productRouter.put('/:id', productControler.update)
-productRouter.patch('/:id', productControler.update)
+productRouter.patch('/:id', productControler.sanitizeProductInput, productControler.update);
 productRouter.delete('/:id', productControler.remove)
 productRouter.patch('/:id/toggle-offer', productControler.toggleOffer);
