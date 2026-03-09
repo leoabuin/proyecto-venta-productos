@@ -37,7 +37,9 @@ function sanitizeOrderInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
-    const orders = await em.find(Order, {}, { populate: ['orderItems'] })
+    const orders = await em.find(Order, {}, { 
+      populate: ['orderItems', 'orderItems.product'] 
+    });
     res.status(200).json({ message: 'found all Orders', data: orders })
   } catch (error: any) {
     return res.status(500).json({ message: error.message })
@@ -64,8 +66,10 @@ async function findOrderbyUser(req: Request, res: Response) {
     const orders = await em.find(Order, {
       user: { id: userId }
     }, {
-      populate: ['orderItems']
+      // AGREGAMOS 'orderItems.product' para que traiga nombre, imagen, etc.
+      populate: ['orderItems', 'orderItems.product']
     })
+    // Mandamos las orders (fijate que aquí las mandás directo, sin el objeto .data)
     res.json(orders)
   } catch (error) {
     console.error('Error al buscar las órdenes del usuario:', error)

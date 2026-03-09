@@ -15,7 +15,7 @@ Content-Type: application/json
   "phoneNumber": "3364290054",
   "adress": "Los pinos 2650",
   "rol": "Cliente",
-  "userName": "LeoAbuin2002",
+  "userName": "LeoAbuin29",
   "password": "LeoAbuin2002!"
 }
 
@@ -57,10 +57,11 @@ Content-Type: application/json
 
 
 ### PATCH
-PATCH  http://localhost:3000/api/users/12456784
+PATCH  http://localhost:3000/api/users/1
 Content-Type: application/json
 
 {
+  "dni": 44290907,
   "mail": "l2002@gmail.com",
   "phoneNumber": "3364290444",
   "adress": "rocca 1466"
@@ -89,4 +90,52 @@ Content-Type: application/json
 
 {
 
+}
+
+### 1. Juan Sebastián (Referencia al Pincha)
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "dni": 24777888,
+  "name": "Juan Sebastian",
+  "surname": "Veron",
+  "mail": "la.brujita@sportify.com.ar",
+  "phoneNumber": "2214567890",
+  "adress": "Calle 1 500, La Plata",
+  "rol": "Empleado",
+  "userName": "Brujita11",
+  "password": "Sportify2026!"
+}
+
+### 2. Martina Paz
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "dni": 40123456,
+  "name": "Martina",
+  "surname": "Paz",
+  "mail": "m.paz@sportify.com",
+  "phoneNumber": "3415889900",
+  "adress": "Av. Wheelwright 1200, Rosario",
+  "rol": "Empleado",
+  "userName": "MartiPaz",
+  "password": "UserPass2026!"
+}
+
+### 3. Carlos Tevez
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "dni": 28555444,
+  "name": "Carlos",
+  "surname": "Tevez",
+  "mail": "el.apache@sportify.com",
+  "phoneNumber": "1133445566",
+  "adress": "Fuerte Apache Torre 1, CABA",
+  "rol": "Empleado",
+  "userName": "Apache32",
+  "password": "Password32!"
 }

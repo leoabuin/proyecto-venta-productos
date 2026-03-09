@@ -45,3 +45,29 @@ Content-Type: application/json
 
 ### borrar un character
 DELETE http://localhost:3000/api/distributors/2045845555
+
+### 1. Juan Carlos
+POST http://localhost:3000/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": 2028456123,
+  "name": "Juan Carlos",
+  "surname": "Rodríguez",
+  "email": "jc.rodriguez@distrisport.com",
+  "phoneNumber": "3414567890",
+  "address": "Av. Pellegrini 1500, Rosario"
+}
+
+### 11. Fernando
+POST http://localhost:3000/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": 2040123871,
+  "name": "Fernando",
+  "surname": "Gago",
+  "email": "fgago.logistica@gmail.com",
+  "phoneNumber": "1122334455",
+  "address": "Av. Libertador 5000, CABA"
+}
