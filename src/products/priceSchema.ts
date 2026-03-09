@@ -1,7 +1,6 @@
-import { z } from 'zod'; // 1. Cambiado a 'zod' en minúscula
+import { z } from 'zod';
 
 const priceSchema = z.object({
-    // 2. Agregamos (date: Date) para que TypeScript esté feliz
     dateFrom: z.coerce.date().refine((date: Date) => !isNaN(date.getTime()), {
         message: "dateFrom debe ser una fecha válida"
     }),
