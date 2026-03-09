@@ -7,8 +7,8 @@ import { brandRouter } from './brands/brand.routes.js'
 import { orderRouter } from './orders/order.routes.js'
 import { categoryRouter } from './categories/category.routes.js'
 import { userRouter } from './users/user.routes.js'
-import {distributorRouter} from './distributors/distributors.routes.js'
-import { orm,syncSchema } from './shared/orm.js'
+import { distributorRouter } from './distributors/distributors.routes.js'
+import { orm, syncSchema } from './shared/orm.js'
 import { RequestContext } from '@mikro-orm/core'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
@@ -16,56 +16,50 @@ import { authenticateToken } from './users/verifyToken.js'
 import { commentRouter } from './comments/comment.routes.js'
 import { genderRouter } from './gender/gender.routes.js'
 
-
-
 const app = express()
+
+// MODIFICACIÓN CORS: Permitimos localhost para desarrollo y la URL de Railway para producción
+const allowedOrigins = ['http://localhost:4200', 'https://tu-frontend.vercel.app']; // <--- Cambiá esto por la URL real de tu front luego
 app.use(cors({
-  origin: 'http://localhost:4200', // Especifica el origen del frontend
-  credentials: true, // Permitir que se envíen credenciales (cookies, cabeceras de autenticación)
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
 }));
+
 app.use(express.json())
 app.use(cookieParser())
-
-/*
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); // Permite todas las orígenes
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Métodos permitidos
-
-  // Permite las solicitudes OPTIONS
-  if (req.method === 'OPTIONS') {
-      return res.sendStatus(200);
-  }
-  
-  next();
-});
-*/
-//luego de los middleares base 
 
 app.use((req, res, next) => {
   RequestContext.create(orm.em, next)
 })
 
-//antes de las rutas y middlewares de nuestro negocio
-
 app.use('/api/products', productRouter)
 app.use('/api/products/prices', priceRouter)
-app.use('/api/prices',priceRouter)
-app.use('/api/brands',brandRouter)
+app.use('/api/prices', priceRouter)
+app.use('/api/brands', brandRouter)
 app.use('/api/users', userRouter)
-app.use('/api/orders',orderRouter)
+app.use('/api/orders', orderRouter)
 app.use('/api/categories', categoryRouter)
 app.use('/api/distributors', distributorRouter)
-app.use('/api/comments',commentRouter)
+app.use('/api/comments', commentRouter)
 app.use('/api/genders', genderRouter)
 
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' })
 })
 
+// IMPORTANTE: En Railway, la base de datos se crea con la URL, pero syncSchema puede ser peligroso.
+// Si querés que Railway cree las tablas la primera vez, dejalo, pero recordá quitarlo después.
+await syncSchema() 
 
-await syncSchema()  //nunca en produccion
+// MODIFICACIÓN PUERTO: Railway inyecta la variable PORT automáticamente
+const PORT = process.env.PORT || 3000;
 
-app.listen(3000, () => {
-  console.log('Server runnning on http://localhost:3000/')
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
 })

@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express'
 import { orm } from '../shared/orm.js'
 import { Product } from './product.entity.js'
 import { Price } from './price.entity.js'
-import { json } from 'stream/consumers'
 import { Brand } from '../brands/brand.entity.js'
 import { validateProduct,validateProductPatch} from './productSchema.js'
 
