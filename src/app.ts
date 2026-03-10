@@ -19,7 +19,7 @@ import { genderRouter } from './gender/gender.routes.js'
 const app = express()
 
 // MODIFICACIÓN CORS: Permitimos localhost para desarrollo y la URL de Railway para producción
-const allowedOrigins = ['http://localhost:4200', 'https://tu-frontend.vercel.app']; // <--- Cambiá esto por la URL real de tu front luego
+const allowedOrigins = ['http://localhost:4200', 'https://tu-url-de-front-en-railway.up.railway.app']
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
