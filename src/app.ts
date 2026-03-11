@@ -20,12 +20,14 @@ const app = express()
 
 // MODIFICACIÓN CORS: Permitimos localhost para desarrollo y la URL de Railway para producción
 // 1. CORS CONFIGURADO PARA COOKIES Y RAILWAY
+const allowedOrigins = [
+  'http://localhost:4200', 
+  'https://proyecto-venta-productos-front-end-production.up.railway.app'
+];
+
 app.use(cors({
-  origin: [
-    'http://localhost:4200', 
-    'https://proyecto-venta-productos-front-end-production.up.railway.app'
-  ],
-  credentials: true, // 👈 VITAL PARA EL DASHBOARD
+  origin: allowedOrigins,
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
 }));
