@@ -71,3 +71,144 @@ Content-Type: application/json
   "phoneNumber": "1122334455",
   "address": "Av. Libertador 5000, CABA"
 }
+
+
+
+
+
+
+
+
+
+### Variable para la URL del Backend
+@baseUrl = https://proyecto-venta-productos-production.up.railway.app
+
+### 1. Juan Carlos
+POST {{baseUrl}}/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": 2028456123,
+  "name": "Juan Carlos",
+  "surname": "Rodríguez",
+  "email": "jc.rodriguez@distrisport.com",
+  "phoneNumber": "3414567890",
+  "address": "Av. Pellegrini 1500, Rosario"
+}
+
+### 2. Fernando
+POST {{baseUrl}}/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": 2040123871,
+  "name": "Fernando",
+  "surname": "Gago",
+  "email": "fgago.logistica@gmail.com",
+  "phoneNumber": "1122334455",
+  "address": "Av. Libertador 5000, CABA"
+}
+
+### 3. Valeria
+POST {{baseUrl}}/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": 2032145678,
+  "name": "Valeria",
+  "surname": "Sánchez",
+  "email": "valeria.sanchez@sportlog.com",
+  "phoneNumber": "1122334755",
+  "address": "Bv. Oroño 200, Rosario"
+}
+
+### 4. Ricardo
+POST {{baseUrl}}/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": 2018273645,
+  "name": "Ricardo",
+  "surname": "Bochini",
+  "email": "elbocha.distri@gmail.com",
+  "phoneNumber": "1144556677",
+  "address": "Alsina 600, Avellaneda"
+}
+
+### 5. Mariana
+POST {{baseUrl}}/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": 2129384756,
+  "name": "Mariana",
+  "surname": "López",
+  "email": "m.lopez@enviosya.com.ar",
+  "phoneNumber": "3514234567",
+  "address": "Colon 1200, Córdoba"
+}
+
+### 6. Sergio
+POST {{baseUrl}}/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": 2033445566,
+  "name": "Sergio",
+  "surname": "Aguero",
+  "email": "kun.distribuidora@gmail.com",
+  "phoneNumber": "1133221144",
+  "address": "Nordelta, Tigre"
+}
+
+### 7. Patricia
+POST {{baseUrl}}/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": 2124567890,
+  "name": "Patricia",
+  "surname": "Gómez",
+  "email": "pgomez.ventas@depornet.com",
+  "phoneNumber": "3416789012",
+  "address": "Santa Fe 1800, Rosario"
+}
+
+### 8. Esteban
+POST {{baseUrl}}/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": 2022334455,
+  "name": "Esteban",
+  "surname": "Andrada",
+  "email": "e.andrada.log@outlook.com",
+  "phoneNumber": "2614556677",
+  "address": "San Martín 500, Mendoza"
+}
+
+### 9. Claudia
+POST {{baseUrl}}/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": 2130123456,
+  "name": "Claudia",
+  "surname": "Villafañe",
+  "email": "claudia.v@eventos-sport.com",
+  "phoneNumber": "1155667788",
+  "address": "Segurola y Habana 4310, CABA"
+}
+
+### 10. Diego
+POST {{baseUrl}}/api/distributors
+Content-Type: application/json
+
+{
+  "CUIL": 2010101010,
+  "name": "Diego",
+  "surname": "Maradona",
+  "email": "el10.distribuciones@eternity.com",
+  "phoneNumber": "1160101010",
+  "address": "Fiorito 10, Lanús"
+}

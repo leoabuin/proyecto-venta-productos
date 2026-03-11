@@ -139,3 +139,121 @@ Content-Type: application/json
   "userName": "Apache32",
   "password": "Password32!"
 }
+
+
+
+
+
+
+
+¡Viene de diez esto, Leonel! Con estos usuarios ya tenés el equipo completo para testear los diferentes roles en Sportify.
+
+Acá te armé el archivo listo para Railway, incluyendo los 3 empleados que pasaste y sumando 3 clientes nuevos con datos realistas para que tengas variedad.
+
+HTTP
+### Variable para la URL del Backend
+@baseUrl = https://proyecto-venta-productos-production.up.railway.app
+
+##############################################
+### EMPLEADOS
+##############################################
+
+### 1. Juan Sebastián (La Brujita)
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "dni": 24777888,
+  "name": "Juan Sebastian",
+  "surname": "Veron",
+  "mail": "la.brujita@sportify.com.ar",
+  "phoneNumber": "2214567890",
+  "adress": "Calle 1 500, La Plata",
+  "rol": "Empleado",
+  "userName": "Brujita11",
+  "password": "Sportify2026!"
+}
+
+### 2. Martina Paz
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "dni": 40123456,
+  "name": "Martina",
+  "surname": "Paz",
+  "mail": "m.paz@sportify.com",
+  "phoneNumber": "3415889900",
+  "adress": "Av. Wheelwright 1200, Rosario",
+  "rol": "Empleado",
+  "userName": "MartiPaz",
+  "password": "UserPass2026!"
+}
+
+### 3. Carlos Tevez (El Apache)
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "dni": 28555444,
+  "name": "Carlos",
+  "surname": "Tevez",
+  "mail": "el.apache@sportify.com",
+  "phoneNumber": "1133445566",
+  "adress": "Fuerte Apache Torre 1, CABA",
+  "rol": "Empleado",
+  "userName": "Apache32",
+  "password": "Password32!"
+}
+
+##############################################
+### CLIENTES
+##############################################
+
+### 4. Antonela Roccuzzo
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "dni": 33123123,
+  "name": "Antonela",
+  "surname": "Roccuzzo",
+  "mail": "anto.roccuzzo@gmail.com",
+  "phoneNumber": "3415000101",
+  "adress": "Kentucky Club de Campo, Funes",
+  "rol": "Cliente",
+  "userName": "AntoR",
+  "password": "ClientePass1!"
+}
+
+### 5. Enzo Perez
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "dni": 31444555,
+  "name": "Enzo",
+  "surname": "Perez",
+  "mail": "enzo.p@river.com",
+  "phoneNumber": "2614887766",
+  "adress": "Av. Figueroa Alcorta 7597, CABA",
+  "rol": "Cliente",
+  "userName": "EnzoPerez24",
+  "password": "ClientePass2!"
+}
+
+### 6. Julieta Poggio
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "dni": 44555666,
+  "name": "Julieta",
+  "surname": "Poggio",
+  "mail": "juli.poggio@fans.com",
+  "phoneNumber": "1166778899",
+  "adress": "Cerrito 100, CABA",
+  "rol": "Cliente",
+  "userName": "JuliPo",
+  "password": "ClientePass3!"
+}

@@ -101,3 +101,76 @@ Content-Type: application/json
   "name": "Mochilas y Bolsos",
   "description": "Bolsos de entrenamiento y mochilas porta botines."
 }
+
+
+
+
+
+
+
+
+### Variable para la URL del Backend
+@baseUrl = https://proyecto-venta-productos-production.up.railway.app
+
+### 4. Pantalones y Shorts
+POST {{baseUrl}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Pantalones y Shorts",
+  "description": "Shorts de juego y pantalones de entrenamiento térmicos."
+}
+
+### 5. Ropa de Entrenamiento
+POST {{baseUrl}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Ropa de Entrenamiento",
+  "description": "Remeras técnicas, musculosas y calzas de compresión."
+}
+
+### 6. Camperas y Buzos
+POST {{baseUrl}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Camperas y Buzos",
+  "description": "Indumentaria de abrigo deportiva y rompevientos."
+}
+
+### 7. Remeras
+POST {{baseUrl}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Remeras",
+  "description": "Remeras de algodon y poliester para entrenamiento y juego."
+}
+
+### 8. Pelotas
+POST {{baseUrl}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Pelotas",
+  "description": "Balones reglamentarios de fútbol, básquet y voley."
+}
+
+### 9. Equipamiento de Tenis
+POST {{baseUrl}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Equipamiento de Tenis",
+  "description": "Raquetas, pelotas de tenis y ropa específica para court."
+}
+
+### 10. Mochilas y Bolsos
+POST {{baseUrl}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Mochilas y Bolsos",
+  "description": "Bolsos de entrenamiento y mochilas porta botines."
+}

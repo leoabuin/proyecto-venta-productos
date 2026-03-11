@@ -30,3 +30,32 @@ Content-Type: application/json
 {
   "name": "Niños"
 }
+
+
+
+### Variable para la URL (así no la escribís 3 veces)
+@baseUrl = https://proyecto-venta-productos-production.up.railway.app
+
+### Cargar Género Masculino
+POST {{baseUrl}}/api/genders
+Content-Type: application/json
+
+{
+  "name": "Masculino"
+}
+
+### Cargar Género Femenino
+POST {{baseUrl}}/api/genders
+Content-Type: application/json
+
+{
+  "name": "Femenino"
+}
+
+### Cargar Género Unisex
+POST {{baseUrl}}/api/genders
+Content-Type: application/json
+
+{
+  "name": "Unisex"
+}
