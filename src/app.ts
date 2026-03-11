@@ -12,33 +12,41 @@ import { orm, syncSchema } from './shared/orm.js'
 import { RequestContext } from '@mikro-orm/core'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import { authenticateToken } from './users/verifyToken.js'
 import { commentRouter } from './comments/comment.routes.js'
 import { genderRouter } from './gender/gender.routes.js'
 
 const app = express()
 
-// MODIFICACIÓN CORS: Permitimos localhost para desarrollo y la URL de Railway para producción
-// 1. CORS CONFIGURADO PARA COOKIES Y RAILWAY
 const allowedOrigins = [
   'http://localhost:4200', 
-  'https://proyecto-venta-productos-front-end-production.up.railway.app'
+  'https://proyecto-venta-productos-front-end-production.up.railway.app',
+  'https://proyecto-venta-productos-front-end-production.up.railway.app/' // Versión con barra
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: (origin, callback) => {
+    // Esto permite peticiones sin origin (como herramientas de test) o las de la lista
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Error de CORS: Origen no permitido'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With']
 }));
 
-app.use(express.json())
+// 2. COOKIE PARSER ANTES QUE EXPRESS.JSON (Orden crítico para cookies)
 app.use(cookieParser())
+app.use(express.json())
 
+// 3. CONTEXTO DEL ORM
 app.use((req, res, next) => {
   RequestContext.create(orm.em, next)
 })
 
+// 4. RUTAS DE LA API
 app.use('/api/products', productRouter)
 app.use('/api/products/prices', priceRouter)
 app.use('/api/prices', priceRouter)
@@ -50,15 +58,14 @@ app.use('/api/distributors', distributorRouter)
 app.use('/api/comments', commentRouter)
 app.use('/api/genders', genderRouter)
 
+// 5. MANEJO DE RUTAS NO ENCONTRADAS
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' })
 })
 
-// IMPORTANTE: En Railway, la base de datos se crea con la URL, pero syncSchema puede ser peligroso.
-// Si querés que Railway cree las tablas la primera vez, dejalo, pero recordá quitarlo después.
+// SYNC SCHEMA (Solo para la primera vez o cambios de entidad)
 await syncSchema() 
 
-// MODIFICACIÓN PUERTO: Railway inyecta la variable PORT automáticamente
 const PORT = Number(process.env.PORT) || 3000;
 
 app.listen(PORT, '0.0.0.0', () => {

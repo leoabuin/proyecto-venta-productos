@@ -153,7 +153,8 @@ async function logIn(req: Request, res: Response) {
       httpOnly: true,
       secure: true,      // Necesario para HTTPS en Railway
       sameSite: 'none',  // Necesario para que el Front y Back se comuniquen
-      maxAge: 3600000    // 1 hora
+      maxAge: 3600000,   // 1 hora
+      path: '/' // <--- AGREGÁ ESTO para que funcione en /api/products, /api/orders, etc.
     });
 
     console.log('Login exitoso para:', user.userName);
