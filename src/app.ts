@@ -19,16 +19,15 @@ import { genderRouter } from './gender/gender.routes.js'
 const app = express()
 
 // MODIFICACIÓN CORS: Permitimos localhost para desarrollo y la URL de Railway para producción
-const allowedOrigins = ['http://localhost:4200', 'https://proyecto-venta-productos-front-end-production.up.railway.app']
+// 1. CORS CONFIGURADO PARA COOKIES Y RAILWAY
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
+  origin: [
+    'http://localhost:4200', 
+    'https://proyecto-venta-productos-front-end-production.up.railway.app'
+  ],
+  credentials: true, // 👈 VITAL PARA EL DASHBOARD
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
 }));
 
 app.use(express.json())
