@@ -14,6 +14,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { commentRouter } from './comments/comment.routes.js'
 import { genderRouter } from './gender/gender.routes.js'
+import { errorHandler } from './shared/errorHandler.middleware.js'
 
 const app = express()
 
@@ -58,10 +59,12 @@ app.use('/api/distributors', distributorRouter)
 app.use('/api/comments', commentRouter)
 app.use('/api/genders', genderRouter)
 
-// 5. MANEJO DE RUTAS NO ENCONTRADAS
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' })
 })
+
+// 6. MANEJO GLOBAL DE ERRORES
+app.use(errorHandler)
 
 // SYNC SCHEMA (Solo para la primera vez o cambios de entidad)
 await syncSchema() 

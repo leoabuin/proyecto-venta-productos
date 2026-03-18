@@ -3,9 +3,7 @@ import { orm } from '../shared/orm.js'
 import { Product } from './product.entity.js'
 import { Price } from './price.entity.js'
 import { Brand } from '../brands/brand.entity.js'
-import { validateProduct,validateProductPatch} from './productSchema.js'
-
-
+import { validateProduct, validateProductPatch } from './productSchema.js'
 
 const em = orm.em
 
@@ -25,7 +23,6 @@ function sanitizeProductInput(req: Request, res: Response, next: NextFunction) {
     distributor: req.body.distributor,
     gender: req.body.gender
   }
-  //more checks here
 
   Object.keys(req.body.sanitizedInput).forEach((key) => {
     if (req.body.sanitizedInput[key] === undefined) {
@@ -35,56 +32,56 @@ function sanitizeProductInput(req: Request, res: Response, next: NextFunction) {
   next()
 }
 
-async function findAll(req: Request, res: Response) {
+async function findAll(req: Request, res: Response, next: NextFunction) {
   try {
-    const products = await em.find(Product, {}, { 
-      populate: ['prices', 'brand', 'category'] 
+    const products = await em.find(Product, {}, {
+      populate: ['prices', 'brand', 'category']
     });
-    res.status(200).json({message:'found all Products',data:products})
+    res.status(200).json({ message: 'found all Products', data: products })
   } catch (error: any) {
-    return res.status(500).json({message: error.message})
-  }
-  }
-
-async function findOne(req: Request, res: Response) {
-  try {
-    const id = Number.parseInt(req.params.id)
-    const product = await em.findOneOrFail(Product,{id},{populate:['prices']})
-    res.status(200).json({message:'found Product',data:product})
-  } catch (error: any) {
-    return res.status(500).json({message: error.message})
+    next(error)
   }
 }
 
-async function add(req: Request, res: Response) {
+async function findOne(req: Request, res: Response, next: NextFunction) {
+  try {
+    const id = Number.parseInt(req.params.id)
+    const product = await em.findOneOrFail(Product, { id }, { populate: ['prices'] })
+    res.status(200).json({ message: 'found Product', data: product })
+  } catch (error: any) {
+    next(error)
+  }
+}
+
+async function add(req: Request, res: Response, next: NextFunction) {
   try {
     const result = validateProduct(req.body)
     if (!result.success) {
       return res.status(400).json({ errors: result.error.errors });
     }
-    const product = em.create(Product,req.body.sanitizedInput)
+    const product = em.create(Product, req.body.sanitizedInput)
     if (req.body.price) {
       const price = em.create(Price, {
         ...req.body.price,
-        product, 
+        product,
       });
       await em.persistAndFlush(price);
     }
     await em.persistAndFlush(product)
-    res.status(201).json({message:'Product created', data:product})
-  } catch (error:any) {
-      res.status(500).json({message: error.message})
+    res.status(201).json({ message: 'Product created', data: product })
+  } catch (error: any) {
+    next(error)
   }
 }
 
-async function update(req: Request, res: Response) {
+async function update(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number.parseInt(req.params.id)
-    const product = await em.findOneOrFail(Product,{id},{populate:['prices']})
+    const product = await em.findOneOrFail(Product, { id }, { populate: ['prices'] })
     let productUpdate
     if (req.method === 'PATCH') {
       productUpdate = validateProductPatch(req.body.sanitizedInput)
-      if(!productUpdate.success){
+      if (!productUpdate.success) {
         return res.status(400).json({ error: JSON.parse(productUpdate.error.message) })
       }
     } else {
@@ -95,50 +92,45 @@ async function update(req: Request, res: Response) {
     }
     em.assign(product, req.body.sanitizedInput)
     await em.flush()
-    res.status(200).json({message: 'product updated',data:product})
-    console.log('updated')
-  } catch (error:any) {
-    res.status(500).json({message: error.message})
+    res.status(200).json({ message: 'product updated', data: product })
+  } catch (error: any) {
+    next(error)
   }
 }
 
-async function remove(req: Request, res: Response) {
+async function remove(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number.parseInt(req.params.id)
     const product = em.getReference(Product, id)
     await em.removeAndFlush(product)
-    res.status(200).json({message: 'product deleted'})
+    res.status(200).json({ message: 'product deleted' })
   } catch (error: any) {
-    res.status(500).json({message: error.message})
+    next(error)
   }
 }
 
-async function addProductToBrand(req: Request, res: Response) {
+async function addProductToBrand(req: Request, res: Response, next: NextFunction) {
   try {
     const idBrand = Number.parseInt(req.params.idBrand)
-    const brand = em.getReference(Brand,idBrand)
-    let newProduct = await em.create(Product,req.body)
-    newProduct.brand=brand
+    const brand = em.getReference(Brand, idBrand)
+    let newProduct = await em.create(Product, req.body)
+    newProduct.brand = brand
     await em.flush()
-    res.status(200).json({message: 'Brand asignated to product'})
+    res.status(200).json({ message: 'Brand asignated to product' })
   } catch (error: any) {
-    res.status(500).json({message: error.message})
+    next(error)
   }
-  
 }
 
-async function toggleOffer(req: Request, res: Response) {
+async function toggleOffer(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number.parseInt(req.params.id);
     const product = await em.findOneOrFail(Product, { id });
-
-    // Aquí no validamos nombre ni talle, solo cambiamos el booleano
     product.isOffer = req.body.isOffer;
-
     await em.flush();
     res.status(200).json({ message: 'Estado de oferta actualizado', data: product });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    next(error)
   }
 }
 

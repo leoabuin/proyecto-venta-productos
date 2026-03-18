@@ -4,10 +4,6 @@ import { User } from './user.entity.js'
 import { validateUser, validateUserPatch, validateUserLogIn } from './userSchema.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import cookieParser from 'cookie-parser'
-
-
-
 
 const em = orm.em
 
@@ -23,40 +19,31 @@ function sanitizeUserInput(req: Request, res: Response, next: NextFunction) {
     userName: req.body.userName,
     orders: req.body.orders
   }
-  //more checks here
-  /*
-    Object.keys(req.body.sanitizedInput).forEach((key) => {
-      if (req.body.sanitizedInput[key] === undefined) {
-        delete req.body.sanitizedInput[key]
-      }
-    })
-  */
   next()
 }
 
+const SECRET_KEY = process.env.JWT_SECRET || 'fallback_secret_for_dev_only';
 
-const SECRET_KEY = 'probando_secret_muy_segura_fwefwioefjpe5648fgsrgr9e2231##@@';
-
-async function findAll(req: Request, res: Response) {
+async function findAll(req: Request, res: Response, next: NextFunction) {
   try {
     const users = await em.find(User, {}, { populate: ['orders'] })
     res.status(200).json({ message: 'found all Users', data: users })
   } catch (error: any) {
-    return res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-async function findOne(req: Request, res: Response) {
+async function findOne(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number.parseInt(req.params.id)
     const user = await em.findOneOrFail(User, { id }, { populate: ['orders'] })
     res.status(200).json({ message: 'found User', data: user })
   } catch (error: any) {
-    return res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-async function add(req: Request, res: Response) {
+async function add(req: Request, res: Response, next: NextFunction) {
   try {
     const result = validateUser(req.body)
     if (!result.success) {
@@ -67,12 +54,11 @@ async function add(req: Request, res: Response) {
     await em.flush()
     res.status(201).json({ message: 'User created', data: user })
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-
-async function update(req: Request, res: Response) {
+async function update(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number.parseInt(req.params.id)
     const user = await em.findOneOrFail(User, { id })
@@ -91,25 +77,23 @@ async function update(req: Request, res: Response) {
     em.assign(user, req.body)
     await em.flush()
     res.status(200).json({ message: 'user updated', data: user })
-    console.log('updated')
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-async function remove(req: Request, res: Response) {
+async function remove(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number.parseInt(req.params.id)
     const user = em.getReference(User, id)
     await em.removeAndFlush(user)
     res.status(200).json({ message: 'User deleted' })
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-
-async function logIn(req: Request, res: Response) {
+async function logIn(req: Request, res: Response, next: NextFunction) {
   try {
     const result = validateUserLogIn(req.body);
     if (!result.success) {
@@ -123,12 +107,10 @@ async function logIn(req: Request, res: Response) {
       return res.status(404).json({ message: 'El nombre de usuario no existe' });
     }
 
-    // 🛡️ SOLUCIÓN AL ERROR DE TS: Verificamos que exista la contraseña
     if (!user.password) {
       return res.status(401).json({ message: 'El usuario no tiene una contraseña válida' });
     }
 
-    // Ahora TypeScript sabe que user.password es string
     const isValid = await bcrypt.compare(password, user.password);
 
     if (!isValid) {
@@ -148,37 +130,32 @@ async function logIn(req: Request, res: Response) {
       { expiresIn: '1h' }
     );
 
-    // 🚀 CONFIGURACIÓN CLAVE PARA RAILWAY (HTTPS + Cookies seguras)
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,      // Necesario para HTTPS en Railway
       sameSite: 'none',  // Necesario para que el Front y Back se comuniquen
       maxAge: 3600000,   // 1 hora
       path: '/',
-      partitioned: true// <--- AGREGÁ ESTO para que funcione en /api/products, /api/orders, etc.
+      partitioned: true
     });
 
-    console.log('Login exitoso para:', user.userName);
     return res.status(200).json({ message: 'Login successful', data: userResponse });
 
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    next(error)
   }
 }
 
-async function logOut(req: Request, res: Response) {
+async function logOut(req: Request, res: Response, next: NextFunction) {
   try {
-    // Para borrarla, usamos los mismos parámetros de seguridad
     res.clearCookie('token', {
       httpOnly: true,
       secure: true,
       sameSite: 'none'
     });
-
-    console.log('Cierre de sesión exitoso');
     return res.status(200).json({ message: 'Cierre de sesion exitoso' });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    next(error)
   }
 }
 

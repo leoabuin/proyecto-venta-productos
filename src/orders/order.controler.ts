@@ -5,8 +5,6 @@ import { User } from '../users/user.entity.js'
 import { Product } from '../products/product.entity.js'
 import { OrderItem } from '../orderItems/orderItem.entity.js'
 
-
-
 const em = orm.em
 
 function sanitizeOrderInput(req: Request, res: Response, next: NextFunction) {
@@ -22,11 +20,6 @@ function sanitizeOrderInput(req: Request, res: Response, next: NextFunction) {
     })) : []
   };
 
-  console.log('sanitize input')
-  console.dir(req.body.sanitizedOrderInput.orderItems, { depth: 5 });
-
-  //more checks here
-
   Object.keys(req.body.sanitizedOrderInput).forEach((key) => {
     if (req.body.sanitizedOrderInput[key] === undefined) {
       delete req.body.sanitizedOrderInput[key]
@@ -35,28 +28,28 @@ function sanitizeOrderInput(req: Request, res: Response, next: NextFunction) {
   next()
 }
 
-async function findAll(req: Request, res: Response) {
+async function findAll(req: Request, res: Response, next: NextFunction) {
   try {
-    const orders = await em.find(Order, {}, { 
-      populate: ['orderItems', 'orderItems.product'] 
+    const orders = await em.find(Order, {}, {
+      populate: ['orderItems', 'orderItems.product']
     });
     res.status(200).json({ message: 'found all Orders', data: orders })
   } catch (error: any) {
-    return res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-async function findOne(req: Request, res: Response) {
+async function findOne(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number.parseInt(req.params.id)
     const order = await em.findOneOrFail(Order, { id }, { populate: ['orderItems'] })
     res.status(200).json({ message: 'found order', data: order })
   } catch (error: any) {
-    return res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-async function findOrderbyUser(req: Request, res: Response) {
+async function findOrderbyUser(req: Request, res: Response, next: NextFunction) {
   const userId = Number.parseInt(req.params.idUser)
 
   if (isNaN(userId)) {
@@ -66,45 +59,36 @@ async function findOrderbyUser(req: Request, res: Response) {
     const orders = await em.find(Order, {
       user: { id: userId }
     }, {
-      // AGREGAMOS 'orderItems.product' para que traiga nombre, imagen, etc.
       populate: ['orderItems', 'orderItems.product']
     })
-    // Mandamos las orders (fijate que aquí las mandás directo, sin el objeto .data)
     res.json(orders)
-  } catch (error) {
-    console.error('Error al buscar las órdenes del usuario:', error)
-    res.status(500).json({ error: 'Error al buscar las órdenes del usuario' })
+  } catch (error: any) {
+    next(error)
   }
 }
 
-
-
-async function add(req: Request, res: Response) {
+async function add(req: Request, res: Response, next: NextFunction) {
   try {
     const order = em.create(Order, req.body.sanitizedInput)
     await em.flush()
     res.status(201).json({ message: 'Order created', data: order })
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-
-
-async function remove(req: Request, res: Response) {
+async function remove(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number.parseInt(req.params.id)
     const order = em.getReference(Order, id)
     await em.removeAndFlush(order)
     res.status(200).json({ message: 'order deleted' })
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    next(error)
   }
 }
 
-
-
-async function placeOrder(req: Request, res: Response): Promise<void> {
+async function placeOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const userId = Number(req.body.userId)
     const { orderItems } = req.body.sanitizedOrderInput
@@ -114,21 +98,15 @@ async function placeOrder(req: Request, res: Response): Promise<void> {
       return
     }
 
-    // Nos aseguramos que un empleado no pueda hacer un pedido
     if (user.rol === 'Empleado') {
       res.status(403).json({ message: 'Acceso denegado: Los empleados no pueden realizar compras.' })
       return
     }
 
-
-
     const order = em.create(Order, {
       ...req.body.sanitizedOrderInput,
       user
     })
-    console.log('order item')
-    console.dir(orderItems, { depth: 5 })
-
 
     const orderItemPromise = orderItems.map(async (item: any) => {
       const product = await em.findOne(Product, { id: item.productId });
@@ -152,14 +130,10 @@ async function placeOrder(req: Request, res: Response): Promise<void> {
       orderItem.quantity = item.quantity;
       orderItem.item_price = item.item_price
 
-
-      console.dir(orderItem, { depth: 5 })
-
       return orderItem
     })
 
     const processedOrderItems = await Promise.all(orderItemPromise);
-    console.log(processedOrderItems)
 
     processedOrderItems.forEach(item => {
       if (item) {
@@ -171,22 +145,15 @@ async function placeOrder(req: Request, res: Response): Promise<void> {
     orderItemsToRemove.forEach(item => {
       order.orderItems.remove(item)
     })
-    // order.orderItems=processedOrderItems;
-
-    console.log(order)
-
 
     await em.flush()
     res.status(201).json(order)
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    next(error)
   }
-
 }
 
-
-
-async function cancelOrder(req: Request, res: Response) {
+async function cancelOrder(req: Request, res: Response, next: NextFunction) {
   try {
     const idOrder = Number.parseInt(req.params.idOrder)
     const order = await em.findOne(Order, idOrder, { populate: ['orderItems'] })
@@ -201,7 +168,6 @@ async function cancelOrder(req: Request, res: Response) {
 
     order.estado = 'Cancelado'
 
-
     for (const orderItem of order.orderItems.getItems()) {
       const productId = orderItem.product?.id
 
@@ -213,20 +179,11 @@ async function cancelOrder(req: Request, res: Response) {
           await em.persistAndFlush(product)
           return res.status(200).json({ message: `El pedido nro ${order.id} ha sido cancelado exitosamente.` })
         }
-      } else {
-        console.error(`El producto del orderItem no tiene un id válido.`);
       }
     }
-
   } catch (error: any) {
-    return res.status(500).json({ message: `Error al cancelar la orden: ${error.message}` });
+    next(error)
   }
-
 }
-
-
-
-
-
 
 export { sanitizeOrderInput, findAll, findOne, add, remove, placeOrder, findOrderbyUser, cancelOrder }
