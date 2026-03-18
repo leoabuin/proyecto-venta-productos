@@ -1,8 +1,9 @@
 import crypto from 'node:crypto'
-import { Property,Entity, PrimaryKey,OneToMany,Cascade,Collection,Unique } from '@mikro-orm/core'
+import { Property,Entity, PrimaryKey,OneToMany,Cascade,Collection,Unique,ManyToMany } from '@mikro-orm/core'
 import { BaseEntity } from '../shared/baseEntity.entity.js'
 import { Order } from '../orders/order.entity.js'
 import { Comment } from '../comments/comment.entity.js'
+import { Product } from '../products/product.entity.js'
 
 
 @Entity()
@@ -43,5 +44,8 @@ export class User extends BaseEntity {
 
   @OneToMany(()=> Comment, comment => comment.user, {cascade: [Cascade.ALL]})
   comments = new Collection<Comment>(this)
+
+  @ManyToMany(() => Product)
+  favorites = new Collection<Product>(this)
   
 }

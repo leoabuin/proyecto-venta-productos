@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { orm } from '../shared/orm.js'
 import { User } from './user.entity.js'
+import { Product } from '../products/product.entity.js'
 import { validateUser, validateUserPatch, validateUserLogIn } from './userSchema.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -159,4 +160,61 @@ async function logOut(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export { sanitizeUserInput, findAll, findOne, add, update, remove, logIn, logOut, SECRET_KEY }
+async function addFavorite(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = (req as any).user.id;
+    const productId = Number.parseInt(req.params.productId);
+    
+    if (isNaN(productId)) {
+      return res.status(400).json({ message: 'ID de producto inválido' });
+    }
+
+    const user = await em.findOneOrFail(User, { id: userId }, { populate: ['favorites'] });
+    const product = await em.findOneOrFail(Product, { id: productId });
+
+    if (!user.favorites.contains(product)) {
+      user.favorites.add(product);
+      await em.flush();
+    }
+
+    res.status(200).json({ message: 'Producto agregado a favoritos', data: user.favorites });
+  } catch (error: any) {
+    next(error);
+  }
+}
+
+async function removeFavorite(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = (req as any).user.id;
+    const productId = Number.parseInt(req.params.productId);
+
+    if (isNaN(productId)) {
+      return res.status(400).json({ message: 'ID de producto inválido' });
+    }
+
+    const user = await em.findOneOrFail(User, { id: userId }, { populate: ['favorites'] });
+    const product = await em.findOneOrFail(Product, { id: productId });
+
+    if (user.favorites.contains(product)) {
+      user.favorites.remove(product);
+      await em.flush();
+    }
+
+    res.status(200).json({ message: 'Producto removido de favoritos', data: user.favorites });
+  } catch (error: any) {
+    next(error);
+  }
+}
+
+async function getFavorites(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = (req as any).user.id;
+    const user = await em.findOneOrFail(User, { id: userId }, { populate: ['favorites.prices', 'favorites.brand'] });
+    
+    res.status(200).json({ message: 'Favoritos obtenidos', data: user.favorites });
+  } catch (error: any) {
+    next(error);
+  }
+}
+
+export { sanitizeUserInput, findAll, findOne, add, update, remove, logIn, logOut, SECRET_KEY, addFavorite, removeFavorite, getFavorites }
