@@ -34,7 +34,21 @@ function sanitizeProductInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response, next: NextFunction) {
   try {
-    const products = await em.find(Product, {}, {
+    const filters: any = {};
+    if (req.query.name) {
+      filters.name = { $like: `%${req.query.name}%` };
+    }
+    if (req.query.category) {
+      filters.category = parseInt(req.query.category as string);
+    }
+    if (req.query.brand) {
+      filters.brand = parseInt(req.query.brand as string);
+    }
+    if (req.query.isOffer !== undefined) {
+      filters.isOffer = req.query.isOffer === 'true';
+    }
+
+    const products = await em.find(Product, filters, {
       populate: ['prices', 'brand', 'category']
     });
     res.status(200).json({ message: 'found all Products', data: products })
