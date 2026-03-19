@@ -123,12 +123,10 @@ async function logIn(req: Request, res: Response) {
       return res.status(404).json({ message: 'El nombre de usuario no existe' });
     }
 
-    // 🛡️ SOLUCIÓN AL ERROR DE TS: Verificamos que exista la contraseña
     if (!user.password) {
       return res.status(401).json({ message: 'El usuario no tiene una contraseña válida' });
     }
 
-    // Ahora TypeScript sabe que user.password es string
     const isValid = await bcrypt.compare(password, user.password);
 
     if (!isValid) {
@@ -148,14 +146,12 @@ async function logIn(req: Request, res: Response) {
       { expiresIn: '1h' }
     );
 
-    // 🚀 CONFIGURACIÓN CLAVE PARA RAILWAY (HTTPS + Cookies seguras)
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true,      // Necesario para HTTPS en Railway
-      sameSite: 'none',  // Necesario para que el Front y Back se comuniquen
-      maxAge: 3600000,   // 1 hora
-      path: '/',
-      partitioned: true// <--- AGREGÁ ESTO para que funcione en /api/products, /api/orders, etc.
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', 
+      maxAge: 3600000, 
+      path: '/'
     });
 
     console.log('Login exitoso para:', user.userName);

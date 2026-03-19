@@ -37,16 +37,16 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With']
 }));
 
-// 2. COOKIE PARSER ANTES QUE EXPRESS.JSON (Orden crítico para cookies)
+
 app.use(cookieParser())
 app.use(express.json())
 
-// 3. CONTEXTO DEL ORM
+
 app.use((req, res, next) => {
   RequestContext.create(orm.em, next)
 })
 
-// 4. RUTAS DE LA API
+//RUTAS DE LA API
 app.use('/api/products', productRouter)
 app.use('/api/products/prices', priceRouter)
 app.use('/api/prices', priceRouter)
@@ -64,7 +64,7 @@ app.use((_, res) => {
 })
 
 // SYNC SCHEMA (Solo para la primera vez o cambios de entidad)
-await syncSchema() 
+//await syncSchema() 
 
 const PORT = Number(process.env.PORT) || 3000;
 
