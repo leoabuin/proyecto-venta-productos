@@ -2,6 +2,8 @@ import { Property,Entity,PrimaryKey,ManyToOne,Rel, OneToMany,Cascade,Collection 
 import { BaseEntity } from "../shared/baseEntity.entity.js";
 import { User } from "../users/user.entity.js";
 import { OrderItem } from "../orderItems/orderItem.entity.js";
+import { Coupon } from "../coupons/coupon.entity.js";
+
 
 
 @Entity()
@@ -27,6 +29,10 @@ export class Order extends BaseEntity {
 
   @OneToMany(()=> OrderItem, orderItem => orderItem.order, {cascade: [Cascade.ALL] , orphanRemoval: true })
   orderItems =  new Collection<OrderItem>(this)
+
+  @ManyToOne(() => Coupon, { nullable: true })
+  coupon?: Rel<Coupon>
+
  
 }
 
