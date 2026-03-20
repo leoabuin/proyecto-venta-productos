@@ -2,8 +2,8 @@
     "compilerOptions": {
       "incremental": true,
       "target": "es2020",
-      "module": "ES2022",
-      "moduleResolution": "bundler",
+      "module": "nodenext",
+      "moduleResolution": "nodenext",
       "sourceMap": true,
       "outDir": "./dist",
       "rootDir": "./",
@@ -12,9 +12,9 @@
       "strict": true,
       "alwaysStrict": true,
       "skipLibCheck": true,
+      "types": ["jest", "node"],
       "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "types": ["node", "jest"]
+      "experimentalDecorators": true
     },
     "include": ["src/**/*", "tests/**/*"],
     "exclude": ["node_modules", "dist"]
