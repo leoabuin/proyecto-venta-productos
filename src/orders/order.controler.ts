@@ -4,6 +4,7 @@ import { Order } from './order.entity.js'
 import { User } from '../users/user.entity.js'
 import { Product } from '../products/product.entity.js'
 import { OrderItem } from '../orderItems/orderItem.entity.js'
+import { Coupon } from '../coupons/coupon.entity.js'
 
 const em = orm.em
 
@@ -13,6 +14,7 @@ function sanitizeOrderInput(req: Request, res: Response, next: NextFunction) {
     total: req.body.total,
     estado: req.body.estado,
     metodo_pago: req.body.metodo_pago,
+    couponCode: req.body.couponCode,
     orderItems: Array.isArray(req.body.orderItems) ? req.body.orderItems.map((item: any) => ({
       productId: item.productId,
       quantity: item.quantity,
@@ -91,7 +93,7 @@ async function remove(req: Request, res: Response, next: NextFunction) {
 async function placeOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const userId = Number(req.body.userId)
-    const { orderItems } = req.body.sanitizedOrderInput
+    const { orderItems, couponCode } = req.body.sanitizedOrderInput
     const user = await em.findOne(User, { id: userId })
     if (!user) {
       res.status(404).json({ message: 'El usuario no existe' })
@@ -149,6 +151,23 @@ async function placeOrder(req: Request, res: Response, next: NextFunction): Prom
         order.orderItems.add(item)
       }
     })
+
+    // Aplicar cupón si existe (sobre el total ya descontado por volumen)
+    if (couponCode) {
+      const coupon = await em.findOne(Coupon, { code: couponCode }) as Coupon | null
+      if (!coupon) {
+        res.status(404).json({ message: 'Cupón no válido' })
+        return
+      }
+
+      if (coupon.expirationDate < new Date()) {
+        res.status(400).json({ message: 'El cupón ha expirado' })
+        return
+      }
+
+      order.coupon = coupon
+      totalOrder = totalOrder * (1 - coupon.discountPercentage / 100)
+    }
 
     order.total = totalOrder;
 
