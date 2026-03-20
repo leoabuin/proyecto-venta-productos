@@ -108,6 +108,7 @@ async function placeOrder(req: Request, res: Response, next: NextFunction): Prom
       user
     })
 
+    let totalOrder = 0;
     const orderItemPromise = orderItems.map(async (item: any) => {
       const product = await em.findOne(Product, { id: item.productId });
       if (!product) {
@@ -128,21 +129,31 @@ async function placeOrder(req: Request, res: Response, next: NextFunction): Prom
       orderItem.order = order;
       orderItem.product = product;
       orderItem.quantity = item.quantity;
-      orderItem.item_price = item.item_price
+      
+      // Aplicar descuento por cantidad (>= 3 unidades -> 20% de descuento)
+      let finalPrice = item.item_price;
+      if (item.quantity >= 3) {
+        finalPrice = item.item_price * 0.8;
+      }
+      
+      orderItem.item_price = finalPrice;
+      totalOrder += finalPrice * item.quantity;
 
       return orderItem
     })
 
     const processedOrderItems = await Promise.all(orderItemPromise);
 
-    processedOrderItems.forEach(item => {
+    processedOrderItems.forEach((item: any) => {
       if (item) {
         order.orderItems.add(item)
       }
     })
 
-    const orderItemsToRemove = order.orderItems.filter(item => !item.product)
-    orderItemsToRemove.forEach(item => {
+    order.total = totalOrder;
+
+    const orderItemsToRemove = order.orderItems.getItems().filter((item: OrderItem) => !item.product)
+    orderItemsToRemove.forEach((item: OrderItem) => {
       order.orderItems.remove(item)
     })
 
