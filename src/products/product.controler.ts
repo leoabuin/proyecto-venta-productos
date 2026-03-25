@@ -55,8 +55,10 @@ async function findOne(req: Request, res: Response, next: NextFunction) {
 
 async function add(req: Request, res: Response, next: NextFunction) {
   try {
+    console.log('=== ADD PRODUCT BODY ===', JSON.stringify(req.body, null, 2))
     const result = validateProduct(req.body)
     if (!result.success) {
+      console.error('=== VALIDATION ERRORS ===', JSON.stringify(result.error.errors, null, 2))
       return res.status(400).json({ errors: result.error.errors });
     }
     const product = em.create(Product, req.body.sanitizedInput)

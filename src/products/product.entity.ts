@@ -28,7 +28,7 @@ export class Product extends BaseEntity {
     @Property({nullable:false})
     stock!: number
 
-    @Property({nullable:true})
+    @Property({ nullable: true, type: 'longtext' })
     imagen!: string
 
     @OneToMany(()=> Price, price => price.product, {cascade: [Cascade.ALL]})

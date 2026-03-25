@@ -14,6 +14,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { commentRouter } from './comments/comment.routes.js'
 import { genderRouter } from './gender/gender.routes.js'
+import { paymentRouter } from './payment/payment.routes.js'
 import { errorHandler } from './shared/errorHandler.middleware.js'
 
 const app = express()
@@ -26,8 +27,8 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Esto permite peticiones sin origin (como herramientas de test) o las de la lista
-    if (!origin || allowedOrigins.includes(origin)) {
+    const isLocalhost = origin && /^http:\/\/localhost(:\d+)?$/.test(origin);
+    if (!origin || allowedOrigins.includes(origin) || isLocalhost) {
       callback(null, true);
     } else {
       callback(new Error('Error de CORS: Origen no permitido'));
@@ -58,6 +59,7 @@ app.use('/api/categories', categoryRouter)
 app.use('/api/distributors', distributorRouter)
 app.use('/api/comments', commentRouter)
 app.use('/api/genders', genderRouter)
+app.use('/api/payment', paymentRouter)
 
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' })

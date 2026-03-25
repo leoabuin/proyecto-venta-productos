@@ -4,7 +4,19 @@ import { SqlHighlighter } from "@mikro-orm/sql-highlighter";
 console.log('Intentando conectar a:', process.env.MYSQLHOST); // <-- Agregá esto para debuguear
 
 export const orm = await MikroORM.init({
-    entities: ['dist/**/*.entity.js'],
+    entities: [
+        'dist/src/brands/brand.entity.js',
+        'dist/src/categories/category.entity.js',
+        'dist/src/comments/comment.entity.js',
+        'dist/src/distributors/distributor.entity.js',
+        'dist/src/gender/gender.entity.js',
+        'dist/src/orders/order.entity.js',
+        'dist/src/orderItems/orderItem.entity.js',
+        'dist/src/products/product.entity.js',
+        'dist/src/products/price.entity.js',
+        'dist/src/shared/baseEntity.entity.js',
+        'dist/src/users/user.entity.js',
+    ],
     entitiesTs: ['src/**/*.entity.ts'],
     type: 'mysql',
     host: process.env.MYSQLHOST || '127.0.0.1',

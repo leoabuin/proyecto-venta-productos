@@ -1,60 +1,69 @@
-### Cargar Género Masculino
-POST http://localhost:3000/api/genders
+### Variable para la URL local
+@baseUrl = http://localhost:3000
+
+### ===== LOCAL =====
+
+### Obtener todos los géneros (públicos)
+GET {{baseUrl}}/api/genders
 Content-Type: application/json
+
+### Crear Género Hombres
+POST {{baseUrl}}/api/genders
+Content-Type: application/json
+Cookie: auth=<TOKEN_ADMIN>
 
 {
-  "name": "Masculino"
+  "name": "Hombres"
 }
 
-
-### Cargar Género Femenino
-POST http://localhost:3000/api/genders
+### Crear Género Mujeres
+POST {{baseUrl}}/api/genders
 Content-Type: application/json
+Cookie: auth=<TOKEN_ADMIN>
 
 {
-  "name": "Femenino"
+  "name": "Mujeres"
 }
 
-### Cargar Género Unisex
-POST http://localhost:3000/api/genders
+### Crear Género Unisex
+POST {{baseUrl}}/api/genders
 Content-Type: application/json
+Cookie: auth=<TOKEN_ADMIN>
 
 {
   "name": "Unisex"
 }
 
-### Cargar Género Niños
-POST http://localhost:3000/api/genders
+
+### ===== PRODUCCIÓN (Railway) =====
+@prodUrl = https://proyecto-venta-productos-production.up.railway.app
+
+### Obtener todos los géneros en producción
+GET {{prodUrl}}/api/genders
 Content-Type: application/json
+
+### Crear Género Hombres en producción
+POST {{prodUrl}}/api/genders
+Content-Type: application/json
+Cookie: auth=<TOKEN_ADMIN>
 
 {
-  "name": "Niños"
+  "name": "Hombres"
 }
 
-
-
-### Variable para la URL (así no la escribís 3 veces)
-@baseUrl = https://proyecto-venta-productos-production.up.railway.app
-
-### Cargar Género Masculino
-POST {{baseUrl}}/api/genders
+### Crear Género Mujeres en producción
+POST {{prodUrl}}/api/genders
 Content-Type: application/json
+Cookie: auth=<TOKEN_ADMIN>
 
 {
-  "name": "Masculino"
+  "name": "Mujeres"
 }
 
-### Cargar Género Femenino
-POST {{baseUrl}}/api/genders
+### Crear Género Unisex en producción
+POST {{prodUrl}}/api/genders
 Content-Type: application/json
-
-{
-  "name": "Femenino"
-}
-
-### Cargar Género Unisex
-POST {{baseUrl}}/api/genders
-Content-Type: application/json
+Cookie: auth=<TOKEN_ADMIN>
 
 {
   "name": "Unisex"

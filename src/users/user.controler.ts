@@ -131,16 +131,21 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
       { expiresIn: '1h' }
     );
 
+    const isProduction = process.env.NODE_ENV === 'production';
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true,      // Necesario para HTTPS en Railway
-      sameSite: 'none',  // Necesario para que el Front y Back se comuniquen
-      maxAge: 3600000,   // 1 hora
+      secure: isProduction,              // true solo en producción (HTTPS)
+      sameSite: isProduction ? 'none' : 'lax', // 'none' para Railway, 'lax' para localhost
+      maxAge: 3600000,                   // 1 hora
       path: '/',
-      partitioned: true
     });
 
-    return res.status(200).json({ message: 'Login successful', data: userResponse });
+    // En desarrollo, también retornamos el token en el body para que el front lo pueda guardar
+    const responseBody: any = { message: 'Login successful', data: userResponse };
+    if (!isProduction) {
+      responseBody.token = token;
+    }
+    return res.status(200).json(responseBody);
 
   } catch (error: any) {
     next(error)
@@ -149,10 +154,11 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
 
 async function logOut(req: Request, res: Response, next: NextFunction) {
   try {
+    const isProduction = process.env.NODE_ENV === 'production';
     res.clearCookie('token', {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none'
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
     });
     return res.status(200).json({ message: 'Cierre de sesion exitoso' });
   } catch (error: any) {

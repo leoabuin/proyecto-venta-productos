@@ -19,8 +19,14 @@ export class Order extends BaseEntity {
   @Property({nullable: false})  
   estado?: string
   
-  @Property({nullable: false})
+  @Property({nullable: true})
   metodo_pago?: string
+
+  @Property({nullable: true})
+  mp_preference_id?: string
+
+  @Property({nullable: true})
+  mp_payment_id?: string
 
   @ManyToOne(()=> User, {nullable:false} )
   user!: Rel<User>
