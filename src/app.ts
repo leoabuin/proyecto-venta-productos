@@ -16,6 +16,7 @@ import { commentRouter } from './comments/comment.routes.js'
 import { genderRouter } from './gender/gender.routes.js'
 import { paymentRouter } from './payment/payment.routes.js'
 import { errorHandler } from './shared/errorHandler.middleware.js'
+import { validateEnv, validateMercadoPago } from './shared/env.validation.js'
 
 const app = express()
 
@@ -24,6 +25,17 @@ const allowedOrigins = [
   'https://proyecto-venta-productos-front-end-production.up.railway.app',
   'https://proyecto-venta-productos-front-end-production.up.railway.app/' // Versión con barra
 ];
+
+// VALIDAR VARIABLES DE ENTORNO AL INICIO
+try {
+  const env = validateEnv()
+  validateMercadoPago(env)
+  console.log('✅ Configuración de Mercado Pago validada exitosamente')
+} catch (error) {
+  console.error('❌ Error fatal en configuración de entorno:')
+  console.error(error instanceof Error ? error.message : error)
+  process.exit(1)
+}
 
 app.use(cors({
   origin: (origin, callback) => {

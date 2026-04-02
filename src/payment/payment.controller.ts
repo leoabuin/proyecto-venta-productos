@@ -2,20 +2,32 @@ import { Request, Response, NextFunction } from 'express'
 import { MercadoPagoConfig, Preference, Payment } from 'mercadopago'
 import { orm } from '../shared/orm.js'
 import { Order } from '../orders/order.entity.js'
+import { 
+  validateCreatePaymentPreferenceInput, 
+  validatePaymentAmounts 
+} from '../shared/payment.validation.js'
+
+// Validar que las credenciales de Mercado Pago estén configuradas
+if (!process.env.MP_ACCESS_TOKEN) {
+  throw new Error(
+    'MP_ACCESS_TOKEN no está configurado en las variables de entorno. ' +
+    'Asegúrate de agregar MP_ACCESS_TOKEN en el archivo .env'
+  )
+}
 
 const client = new MercadoPagoConfig({
-  accessToken: process.env.MP_ACCESS_TOKEN || '',
+  accessToken: process.env.MP_ACCESS_TOKEN,
 })
 
 // POST /api/payment/create-preference
+// POST /api/payment/create-preference
 async function createPreference(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { orderId, items } = req.body
-
-    if (!orderId || !items || !Array.isArray(items) || items.length === 0) {
-      res.status(400).json({ message: 'orderId e items son requeridos' })
-      return
-    }
+    // Validar datos de entrada
+    const { orderId, items } = validateCreatePaymentPreferenceInput(req.body)
+    
+    // Validar montos
+    validatePaymentAmounts(items)
 
     const em = orm.em.fork()
     const order = await em.findOne(Order, { id: Number(orderId) })
@@ -54,7 +66,16 @@ async function createPreference(req: Request, res: Response, next: NextFunction)
 
     const result = await preference.create({ body })
 
-    order.mp_preference_id = result.id ?? undefined
+    if (!result.id) {
+      console.error('Error: Mercado Pago no retornó un ID de preferencia')
+      res.status(500).json({ 
+        message: 'Error al crear la preferencia de pago en Mercado Pago',
+        details: 'No se pudo obtener el ID de la preferencia'
+      })
+      return
+    }
+
+    order.mp_preference_id = result.id
     await em.flush()
 
     res.status(201).json({
@@ -64,70 +85,129 @@ async function createPreference(req: Request, res: Response, next: NextFunction)
       sandbox_init_point: result.sandbox_init_point,
     })
   } catch (error: any) {
-    console.error('=== MP ERROR ===', error?.message)
+    console.error('=== MP ERROR ===', error?.message, error?.stack)
+    
+    // Errores de validación
+    if (error?.message?.includes('Datos de pago inválidos') || 
+        error?.message?.includes('Item inválido') ||
+        error?.message?.includes('inválido')) {
+      res.status(400).json({
+        message: 'Error en los datos de pago',
+        details: error.message
+      })
+      return
+    }
+    
+    // Errores específicos de Mercado Pago
+    if (error?.message?.includes('authentication') || error?.message?.includes('access_token')) {
+      console.error('❌ Error de autenticación con Mercado Pago')
+      res.status(500).json({
+        message: 'Error de autenticación con Mercado Pago',
+        details: 'Verifica que MP_ACCESS_TOKEN esté correctamente configurado en .env'
+      })
+      return
+    }
+
+    if (error?.message?.includes('Invalid credentials')) {
+      console.error('❌ Credenciales inválidas de Mercado Pago')
+      res.status(500).json({
+        message: 'Credenciales de Mercado Pago inválidas',
+        details: 'Verifica que el token de acceso sea correcto'
+      })
+      return
+    }
+
     next(error)
   }
 }
 
 // POST /api/payment/webhook
+// Manejador del webhook de Mercado Pago
+// Se ejecuta automáticamente cuando hay cambios en pagos (requiere URL pública)
 async function handleWebhook(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { type, data } = req.body
 
-    console.log('[Webhook] Recibido evento type:', type, 'data:', data)
+    console.log('[Webhook] ============================================')
+    console.log('[Webhook] Evento recibido de Mercado Pago')
+    console.log('[Webhook] Tipo:', type)
+    console.log('[Webhook] Data:', data)
 
+    // Solo procesamos eventos de pago
     if (type !== 'payment' || !data?.id) {
-      console.log('[Webhook] Evento ignorado: no es de pago o sin ID')
+      console.log('[Webhook] ❌ Evento ignorado: no es de pago o sin ID')
+      console.log('[Webhook] ============================================')
       res.sendStatus(200)
       return
     }
 
+    // Obtener detalles del pago de Mercado Pago
     const paymentApi = new Payment(client)
     const paymentInfo = await paymentApi.get({ id: String(data.id) })
 
     const externalRef = paymentInfo.external_reference
     const paymentStatus = paymentInfo.status
+    const paymentId = String(data.id)
 
-    console.log('[Webhook] Payment ID:', data.id, 'External Ref:', externalRef, 'Status:', paymentStatus)
+    console.log('[Webhook] Payment ID:', paymentId)
+    console.log('[Webhook] Status:', paymentStatus)
+    console.log('[Webhook] External Reference (Order ID):', externalRef)
 
+    // Si no hay referencia externa, no podemos asociarlo a una orden
     if (!externalRef) {
-      console.log('[Webhook] Sin external_reference, ignorando')
+      console.warn('[Webhook] ⚠️  Sin external_reference, no se puede asociar a orden')
+      console.log('[Webhook] ============================================')
       res.sendStatus(200)
       return
     }
 
+    // Buscar la orden en BD
     const em = orm.em.fork()
     const order = await em.findOne(Order, { id: Number(externalRef) })
 
     if (!order) {
-      console.log('[Webhook] Orden no encontrada para ID:', externalRef)
+      console.warn('[Webhook] ⚠️  Orden no encontrada para ID:', externalRef)
+      console.log('[Webhook] ============================================')
       res.sendStatus(200)
       return
     }
 
-    console.log('[Webhook] Orden encontrada ID:', order.id, 'Estado actual:', order.estado)
-
-    order.mp_payment_id = String(data.id)
-
     const previousStatus = order.estado
+    console.log('[Webhook] Orden encontrada - Estado actual:', previousStatus)
+
+    // Guardar el ID de pago de Mercado Pago
+    order.mp_payment_id = paymentId
+
+    // Actualizar estado de la orden según el estado del pago
     if (paymentStatus === 'approved') {
       order.estado = 'Pagado'
+      console.log('[Webhook] ✅ Pago APROBADO → Estado = "Pagado"')
     } else if (paymentStatus === 'rejected') {
       order.estado = 'Rechazado'
+      console.log('[Webhook] ❌ Pago RECHAZADO → Estado = "Rechazado"')
     } else if (paymentStatus === 'pending' || paymentStatus === 'in_process') {
       order.estado = 'Pago Pendiente'
+      console.log('[Webhook] ⏳ Pago PENDIENTE → Estado = "Pago Pendiente"')
+    } else {
+      console.warn('[Webhook] ⚠️  Estado desconocido:', paymentStatus)
     }
 
+    // Guardar cambios en BD
     if (previousStatus !== order.estado) {
-      console.log('[Webhook] Estado actualizado:', previousStatus, '→', order.estado)
+      console.log('[Webhook] 📊 Transición de estado:', previousStatus, '→', order.estado)
+      await em.flush()
+      console.log('[Webhook] ✅ Orden actualizada en base de datos')
+    } else {
+      console.log('[Webhook] ℹ️  Estado no cambió, sin actualización necesaria')
     }
 
-    await em.flush()
-    console.log('[Webhook] Orden guardada exitosamente')
+    console.log('[Webhook] ============================================')
     res.sendStatus(200)
   } catch (error: any) {
-    console.error('[Webhook] Error:', error?.message, error?.stack)
-    // Siempre responder 200 para que MP no reintente
+    console.error('[Webhook] ❌ ERROR:', error?.message)
+    console.error('[Webhook] Stack:', error?.stack)
+    // Siempre responder 200 para que Mercado Pago no reintente
+    // Los reintentos infinitos pueden causar problemas
     res.sendStatus(200)
   }
 }
@@ -227,10 +307,19 @@ async function verifyPayment(req: Request, res: Response, next: NextFunction): P
     }
 
     if (previousStatus !== order.estado) {
-      console.log(`[verifyPayment] Estado actualizado: ${previousStatus} → ${order.estado}`)
+      console.log(`[verifyPayment] ✅ Estado actualizado: ${previousStatus} → ${order.estado}`)
+      await em.flush()
+      console.log(`[verifyPayment] 💾 Cambios guardados en BD`)
+    } else {
+      console.log(`[verifyPayment] ℹ️  Estado sin cambios: ${order.estado}`)
     }
 
-    await em.flush()
+    console.log(`[verifyPayment] 📤 Respondiendo con:`, {
+      orderStatus: order.estado,
+      paymentStatus,
+      paymentId: resolvedPaymentId,
+      orderId: order.id
+    })
 
     res.status(200).json({
       message: 'Estado de orden verificado y actualizado',
