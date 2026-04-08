@@ -13,7 +13,7 @@ const brandSchema = zod.object({
   ]),
   logo: zod.string().url({
     message: 'No es una URL valida'
-  })
+  }).or(zod.string().startsWith('data:image/', { message: 'El logo debe ser una URL o una imagen en Base64' }))
 });
 
 
@@ -28,7 +28,7 @@ const brandToPatch = zod.object({
   ]).optional(),
   logo: zod.string().url({
     message: 'No es una URL valida'
-  }).optional()
+  }).or(zod.string().startsWith('data:image/', { message: 'El logo debe ser una URL o una imagen en Base64' })).optional()
 
 })
 
