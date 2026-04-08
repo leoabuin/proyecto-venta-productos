@@ -131,13 +131,14 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
       { expiresIn: '1h' }
     );
 
+    const isProduction = process.env.NODE_ENV === 'production';
+
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true,      // Necesario para HTTPS en Railway
-      sameSite: 'none',  // Necesario para que el Front y Back se comuniquen
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 3600000,   // 1 hora
       path: '/',
-      partitioned: true
     });
 
     return res.status(200).json({ message: 'Login successful', data: userResponse });
@@ -149,10 +150,11 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
 
 async function logOut(req: Request, res: Response, next: NextFunction) {
   try {
+    const isProduction = process.env.NODE_ENV === 'production';
     res.clearCookie('token', {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none'
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax'
     });
     return res.status(200).json({ message: 'Cierre de sesion exitoso' });
   } catch (error: any) {
