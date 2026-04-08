@@ -22,7 +22,7 @@ export class Brand extends BaseEntity{
     @Property({nullable:true})
     countryOfOrigin!: string
 
-    @Property()
+    @Property({ columnType: 'longtext', nullable: true })
     logo?: string
 
     @OneToMany(()=>Product,product => product.brand)
