@@ -28,3 +28,13 @@ export const adminOnly = (req: Request, res: Response, next: NextFunction) => {
     return res.status(403).json({ message: 'Acceso restringido: requiere perfil de administrador' });
   }
 };
+
+export const staffOnly = (req: Request, res: Response, next: NextFunction) => {
+  const user = (req as any).user;
+
+  if (user && (user.rol === 'admin' || user.rol === 'Empleado')) {
+    next();
+  } else {
+    return res.status(403).json({ message: 'Acceso restringido: requiere perfil de empleado o administrador' });
+  }
+};
