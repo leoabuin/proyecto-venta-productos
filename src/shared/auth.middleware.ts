@@ -31,6 +31,7 @@ export const adminOnly = (req: Request, res: Response, next: NextFunction) => {
 
 export const staffOnly = (req: Request, res: Response, next: NextFunction) => {
   const user = (req as any).user;
+  console.log('staffOnly middleware user:', user);
 
   if (user && (user.rol === 'admin' || user.rol === 'Empleado')) {
     next();
