@@ -128,7 +128,7 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
         mail: user.mail
       },
       SECRET_KEY,
-      { expiresIn: '1h' }
+      { expiresIn: '24h' }
     );
 
     const isProduction = process.env.NODE_ENV === 'production';
@@ -137,7 +137,7 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? 'none' : 'lax',
-      maxAge: 3600000,   // 1 hora
+      maxAge: 86400000,   // 24 horas
       path: '/',
     });
 
