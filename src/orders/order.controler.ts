@@ -122,10 +122,12 @@ async function placeOrder(req: Request, res: Response, next: NextFunction): Prom
       }
 
       if (product.stock < item.quantity) {
-        throw new Error(`El producto ${product.name} no tiene suficiente stock`);
+        const err: any = new Error(`El producto ${product.name} no tiene suficiente stock`)
+        err.status = 400
+        throw err
       }
 
-      product.stock -= item.quantity;
+      // NO debitamos stock aquí — se debita cuando el pago es confirmado por el webhook de MP
 
       const orderItem = new OrderItem();
       orderItem.order = order;
