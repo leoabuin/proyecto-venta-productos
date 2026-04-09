@@ -69,6 +69,21 @@ app.use(errorHandler)
 // SYNC SCHEMA (Solo para la primera vez o cambios de entidad)
 await syncSchema() 
 
+// SEED DE PUBLICO (GENDERS)
+try {
+  const em = orm.em.fork();
+  const genders = ['Hombre', 'Mujer', 'Unisex'];
+  for (const g of genders) {
+    const rows = await em.getConnection().execute('SELECT id FROM gender WHERE name = ?', [g]);
+    if (rows.length === 0) {
+      await em.getConnection().execute('INSERT INTO gender (name) VALUES (?)', [g]);
+      console.log(`✅ Público insertado automáticamente: ${g}`);
+    }
+  }
+} catch (e) {
+  console.error('Error seeding genders:', e);
+}
+
 const PORT = Number(process.env.PORT) || 3000;
 
 app.listen(PORT, '0.0.0.0', () => {
