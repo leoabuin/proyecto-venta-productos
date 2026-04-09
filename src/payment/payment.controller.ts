@@ -43,7 +43,8 @@ export async function createPreference(req: Request, res: Response, next: NextFu
           failure: `${frontUrl}/payment/failure`,
           pending: `${frontUrl}/payment/pending`,
         },
-        auto_return: 'approved',  // Redirige automáticamente al pagar con éxito
+        // auto_return requiere HTTPS — se activa solo en producción con FRONTEND_URL definido
+        ...(process.env.FRONTEND_URL ? { auto_return: 'approved' as const } : {}),
       },
     })
 
@@ -109,8 +110,10 @@ export async function handleWebhook(req: Request, res: Response, next: NextFunct
 /**
  * POST /api/payment/verify-payment
  * Body: { order_id, payment_id?, mp_status? }
- * - Si mp_status === 'approved' (viene del redirect de MP), actualiza la orden a 'Pagado'.
- * - La verificación con la API de MP es un check extra, pero no bloquea si falla.
+ * Estrategias de verificación (en orden):
+ * 1. Si viene payment_id + mp_status='approved' → confiar en el redirect de MP
+ * 2. Si viene payment_id solo → verificar con MP API
+ * 3. Si no viene payment_id → buscar en MP por external_reference (para sandbox/sin redirect)
  */
 export async function verifyPayment(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -123,37 +126,66 @@ export async function verifyPayment(req: Request, res: Response, next: NextFunct
       return
     }
 
-    // Si MP ya nos dijo que fue aprobado (vía redirect) y la orden aún no está pagada
-    if (payment_id && mp_status === 'approved' && order.estado !== 'Pagado') {
-      let confirmedByMp = false
+    if (order.estado === 'Pagado') {
+      res.status(200).json({ paymentStatus: 'approved', orderStatus: 'Pagado', orderId: order.id })
+      return
+    }
 
-      // Intentar verificar con la API de MP (opcional, no bloquea si falla)
+    let mpPaymentStatus: string | null = null
+
+    // === Estrategia 1: payment_id + mp_status desde redirect de MP ===
+    if (payment_id && mp_status === 'approved') {
+      mpPaymentStatus = 'approved'
+    }
+
+    // === Estrategia 2: verificar por payment_id con la API de MP ===
+    if (payment_id && !mpPaymentStatus) {
       try {
         const paymentApi = new Payment(getClient())
         const paymentInfo = await paymentApi.get({ id: String(payment_id) })
-        console.log(`[verify-payment] MP API status para payment ${payment_id}: ${paymentInfo.status}`)
-        if (paymentInfo.status === 'approved') confirmedByMp = true
-      } catch (mpError: any) {
-        // MP API falló (ej: token de producción vs pago de sandbox). Confiamos en el redirect.
-        console.warn('[verify-payment] MP API check falló, confiando en el redirect de MP:', mpError?.message)
-        confirmedByMp = true // Confiamos en que MP redirigió a /success
-      }
-
-      if (confirmedByMp) {
-        order.estado = 'Pagado'
-        // Descontar stock
-        for (const oi of (order.orderItems as any).getItems()) {
-          if (oi.product && oi.quantity) {
-            oi.product.stock = Math.max(0, oi.product.stock - oi.quantity)
-          }
-        }
-        await em.flush()
-        console.log(`[verify-payment] ✅ Orden #${order_id} actualizada a PAGADO`)
+        mpPaymentStatus = paymentInfo.status ?? null
+        console.log(`[verify-payment] MP API (by id) status: ${mpPaymentStatus}`)
+      } catch (e: any) {
+        console.warn('[verify-payment] Error al verificar por payment_id:', e?.message)
       }
     }
 
+    // === Estrategia 3: buscar por external_reference (sandbox / sin redirect) ===
+    if (!mpPaymentStatus) {
+      try {
+        const { default: axios } = await import('axios')
+        const searchRes = await axios.get('https://api.mercadopago.com/v1/payments/search', {
+          params: { external_reference: String(order_id), sort: 'date_created', criteria: 'desc', limit: 5 },
+          headers: { Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}` },
+        })
+        const payments: any[] = searchRes.data?.results ?? []
+        const approved = payments.find((p: any) => p.status === 'approved')
+        if (approved) {
+          mpPaymentStatus = 'approved'
+          console.log(`[verify-payment] Pago aprobado encontrado por external_reference: ${approved.id}`)
+        } else if (payments.length > 0) {
+          mpPaymentStatus = payments[0].status
+          console.log(`[verify-payment] Último pago por external_reference: ${mpPaymentStatus}`)
+        }
+      } catch (e: any) {
+        console.warn('[verify-payment] Error al buscar por external_reference:', e?.message)
+      }
+    }
+
+    // === Actualizar la orden si el pago fue aprobado ===
+    if (mpPaymentStatus === 'approved') {
+      order.estado = 'Pagado'
+      for (const oi of (order.orderItems as any).getItems()) {
+        if (oi.product && oi.quantity) {
+          oi.product.stock = Math.max(0, oi.product.stock - oi.quantity)
+        }
+      }
+      await em.flush()
+      console.log(`[verify-payment] ✅ Orden #${order_id} actualizada a PAGADO`)
+    }
+
     res.status(200).json({
-      paymentStatus: order.estado === 'Pagado' ? 'approved' : (mp_status || 'pending'),
+      paymentStatus: mpPaymentStatus ?? 'pending',
       orderStatus: order.estado,
       orderId: order.id,
     })
@@ -161,4 +193,5 @@ export async function verifyPayment(req: Request, res: Response, next: NextFunct
     next(error)
   }
 }
+
 
