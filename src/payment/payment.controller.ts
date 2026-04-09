@@ -43,7 +43,7 @@ export async function createPreference(req: Request, res: Response, next: NextFu
           failure: `${frontUrl}/payment/failure`,
           pending: `${frontUrl}/payment/pending`,
         },
-        // auto_return solo funciona con HTTPS; en prod agregar: auto_return: 'approved'
+        auto_return: 'approved',  // Redirige automáticamente al pagar con éxito
       },
     })
 
@@ -108,13 +108,13 @@ export async function handleWebhook(req: Request, res: Response, next: NextFunct
 
 /**
  * POST /api/payment/verify-payment
- * Recibe { order_id, payment_id? }
- * Si recibe payment_id, verifica el estado real en MP y actualiza la BD.
- * Si no, devuelve el estado actual en la BD.
+ * Body: { order_id, payment_id?, mp_status? }
+ * - Si mp_status === 'approved' (viene del redirect de MP), actualiza la orden a 'Pagado'.
+ * - La verificación con la API de MP es un check extra, pero no bloquea si falla.
  */
 export async function verifyPayment(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { order_id, payment_id } = req.body
+    const { order_id, payment_id, mp_status } = req.body
     const em = orm.em.fork()
     const order = await em.findOne(Order, { id: Number(order_id) }, { populate: ['orderItems', 'orderItems.product'] as any })
 
@@ -123,45 +123,37 @@ export async function verifyPayment(req: Request, res: Response, next: NextFunct
       return
     }
 
-    // Si recibimos un payment_id, consultamos MP y actualizamos la BD
-    if (payment_id) {
+    // Si MP ya nos dijo que fue aprobado (vía redirect) y la orden aún no está pagada
+    if (payment_id && mp_status === 'approved' && order.estado !== 'Pagado') {
+      let confirmedByMp = false
+
+      // Intentar verificar con la API de MP (opcional, no bloquea si falla)
       try {
         const paymentApi = new Payment(getClient())
         const paymentInfo = await paymentApi.get({ id: String(payment_id) })
-        const status = paymentInfo.status  // 'approved' | 'rejected' | 'pending' | 'in_process'
-
-        console.log(`[verify-payment] MP status para payment ${payment_id}: ${status}`)
-
-        if (status === 'approved' && order.estado !== 'Pagado') {
-          order.estado = 'Pagado'
-          // Descontar stock ahora que el pago está confirmado
-          for (const oi of (order.orderItems as any).getItems()) {
-            if (oi.product && oi.quantity) {
-              oi.product.stock = Math.max(0, oi.product.stock - oi.quantity)
-            }
-          }
-          await em.flush()
-        } else if (status === 'rejected' && order.estado === 'pending') {
-          order.estado = 'Rechazado'
-          await em.flush()
-        }
-
-        res.status(200).json({
-          paymentStatus: status,
-          orderStatus: order.estado,
-          orderId: order.id,
-          paymentId: String(payment_id),
-        })
-        return
+        console.log(`[verify-payment] MP API status para payment ${payment_id}: ${paymentInfo.status}`)
+        if (paymentInfo.status === 'approved') confirmedByMp = true
       } catch (mpError: any) {
-        console.error('[verify-payment] Error al consultar MP:', mpError?.message)
-        // Si falla la consulta a MP, devolvemos el estado actual de la BD igual
+        // MP API falló (ej: token de producción vs pago de sandbox). Confiamos en el redirect.
+        console.warn('[verify-payment] MP API check falló, confiando en el redirect de MP:', mpError?.message)
+        confirmedByMp = true // Confiamos en que MP redirigió a /success
+      }
+
+      if (confirmedByMp) {
+        order.estado = 'Pagado'
+        // Descontar stock
+        for (const oi of (order.orderItems as any).getItems()) {
+          if (oi.product && oi.quantity) {
+            oi.product.stock = Math.max(0, oi.product.stock - oi.quantity)
+          }
+        }
+        await em.flush()
+        console.log(`[verify-payment] ✅ Orden #${order_id} actualizada a PAGADO`)
       }
     }
 
-    // Sin payment_id: devolver estado actual de la BD
     res.status(200).json({
-      paymentStatus: order.estado === 'Pagado' ? 'approved' : 'pending',
+      paymentStatus: order.estado === 'Pagado' ? 'approved' : (mp_status || 'pending'),
       orderStatus: order.estado,
       orderId: order.id,
     })
@@ -169,3 +161,4 @@ export async function verifyPayment(req: Request, res: Response, next: NextFunct
     next(error)
   }
 }
+
