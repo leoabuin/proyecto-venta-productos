@@ -5,7 +5,7 @@ const productSchema = z.object({
     description: z.string().optional(), // Es opcional, pero si está presente, debe ser un string
     waist: z.enum(['S', 'M', 'L', 'XL', 'XXL'], { message: "La talla debe ser una de las siguientes: S, M, L, XL, XXL" }), // Validar valores permitidos para la talla
     stock: z.number().int().nonnegative({ message: "El stock debe ser un número entero no negativo" }), // Validar que sea un entero no negativo
-    imagen: z.string().url({ message: "Debe ser una URL válida para la imagen" }), // Validar que sea una URL
+    imagen: z.string().url({ message: "Debe ser una URL válida para la imagen" }).or(z.string().startsWith('data:image/', { message: 'La imagen debe ser una URL o Base64' })),
     isOffer: z.boolean(),
     isContinued: z.boolean().optional().default(true)
 })
@@ -16,7 +16,7 @@ const productSchemaPatch = z.object({
     description: z.string().optional(), 
     waist: z.enum(['S', 'M', 'L', 'XL', 'XXL'], { message: "La talla debe ser una de las siguientes: S, M, L, XL, XXL" }).optional(), 
     stock: z.number().int().nonnegative({ message: "El stock debe ser un número entero no negativo" }).optional(), 
-    imagen: z.string().url({ message: "Debe ser una URL válida para la imagen" }).optional(),
+    imagen: z.string().url({ message: "Debe ser una URL válida para la imagen" }).or(z.string().startsWith('data:image/', { message: 'La imagen debe ser una URL o Base64' })).optional(),
     isOffer: z.boolean().optional().default(false),
     isContinued: z.boolean().optional().default(true)
 })
