@@ -15,6 +15,7 @@ import cookieParser from 'cookie-parser'
 import { commentRouter } from './comments/comment.routes.js'
 import { genderRouter } from './gender/gender.routes.js'
 import { errorHandler } from './shared/errorHandler.middleware.js'
+import { paymentRouter } from './payment/payment.routes.js'
 
 const app = express()
 
@@ -58,6 +59,7 @@ app.use('/api/categories', categoryRouter)
 app.use('/api/distributors', distributorRouter)
 app.use('/api/comments', commentRouter)
 app.use('/api/genders', genderRouter)
+app.use('/api/payment', paymentRouter)
 
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' })
