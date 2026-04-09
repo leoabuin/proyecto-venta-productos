@@ -55,19 +55,33 @@ async function findOne(req: Request, res: Response, next: NextFunction) {
 
 async function add(req: Request, res: Response, next: NextFunction) {
   try {
-    const result = validateProduct(req.body)
+    // Coerce string IDs from <select> to numbers and stock to integer
+    const body = {
+      ...req.body.sanitizedInput,
+      stock: Number(req.body.sanitizedInput.stock),
+      brand: Number(req.body.sanitizedInput.brand),
+      category: Number(req.body.sanitizedInput.category),
+      distributor: Number(req.body.sanitizedInput.distributor),
+      gender: Number(req.body.sanitizedInput.gender),
+      isOffer: Boolean(req.body.sanitizedInput.isOffer),
+    };
+    
+    const result = validateProduct(body)
     if (!result.success) {
       return res.status(400).json({ errors: result.error.errors });
     }
-    const product = em.create(Product, req.body.sanitizedInput)
+    const product = em.create(Product, body)
+    await em.persistAndFlush(product)
+    
     if (req.body.price) {
       const price = em.create(Price, {
         ...req.body.price,
+        cost: Number(req.body.price.cost),
         product,
       });
       await em.persistAndFlush(price);
     }
-    await em.persistAndFlush(product)
+    
     res.status(201).json({ message: 'Product created', data: product })
   } catch (error: any) {
     next(error)
