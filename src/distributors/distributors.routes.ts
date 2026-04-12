@@ -10,4 +10,3 @@ distributorRouter.post('/', authMiddleware, staffOnly, sanitizeDistributorInput,
 distributorRouter.put('/:CUIL', authMiddleware, staffOnly, sanitizeDistributorInput, update)
 distributorRouter.patch('/:CUIL', authMiddleware, staffOnly, update)
 distributorRouter.delete('/:CUIL', authMiddleware, staffOnly, remove)
-

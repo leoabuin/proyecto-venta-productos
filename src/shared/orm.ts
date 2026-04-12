@@ -11,8 +11,7 @@ export const orm = await MikroORM.init({
     port: Number(process.env.MYSQLPORT) || 3306,
     user: process.env.MYSQLUSER || 'root',
     password: process.env.MYSQLPASSWORD || 'root',
-    // IMPORTANTE: Si MYSQLDATABASE está vacío, que NO use ventaProductos, sino railway
-    dbName: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE || 'railway', 
+    dbName: process.env.MYSQLDATABASE || 'ventaProductos', 
     debug: true,
     highlighter: new SqlHighlighter(),
     schemaGenerator: {

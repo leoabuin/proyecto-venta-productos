@@ -147,3 +147,96 @@ Content-Type: application/json
   "countryOfOrigin": "Brasil",
   "logo": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Kappa_logo.svg"
 }
+
+
+
+
+
+### Variable para la URL (así no la escribís 3 veces)
+@baseUrl = https://proyecto-venta-productos-production.up.railway.app
+
+
+POST {{baseUrl}}/api/brands
+Content-Type: application/json
+
+{
+  "name": "Puma",
+  "description": "Innovación y estilo en ropa de entrenamiento y lifestyle.",
+  "website": "https://ar.puma.com/",
+  "countryOfOrigin": "Argentina",
+  "logo": "https://static.vecteezy.com/system/resources/previews/022/076/746/non_2x/puma-logo-and-art-free-vector.jpg"
+}
+
+### 4. Under Armour
+POST {{baseUrl}}/api/brands
+Content-Type: application/json
+
+{
+"name": "Under Armour",
+"description": "Ropa de alto rendimiento con tecnología de absorción de sudor.",
+"website": "https://www.underarmour.com.ar/",
+"countryOfOrigin": "EEUU",
+"logo": "https://thumbs.dreamstime.com/b/under-armour-logo-editorial-illustrative-white-background-under-armour-logo-editorial-illustrative-white-background-eps-208333017.jpg"
+}
+
+### 4. Under Armour
+POST {{baseUrl}}/api/brands
+Content-Type: application/json
+
+{
+"name": "Reebok",
+"description": "Enfocada en fitness, crossfit y calzado deportivo clásico.",
+"website": "https://www.reebok.com.ar/",
+"countryOfOrigin": "EEUU",
+"logo": "https://logodownload.org/wp-content/uploads/2017/06/reebok-logo-1.png"
+}
+
+
+### 6. Topper
+POST {{baseUrl}}/api/brands
+Content-Type: application/json
+
+{
+"name": "Topper",
+"description": "Marca líder en el mercado argentino de calzado y textil.",
+"website": "https://www.topper.com.ar/",
+"countryOfOrigin": "Argentina",
+"logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0MrilwTFKn6Tnh_DOuC_j1ldGlQJi51vVyhrNDa0ha0RWA5AGPU0AM0I&s"
+}
+
+### 7. Asics
+POST {{baseUrl}}/api/brands
+Content-Type: application/json
+
+{
+"name": "Asics",
+"description": "Referente mundial en calzado para running profesional.",
+"website": "https://www.asics.com.ar/",
+"countryOfOrigin": "China",
+"logo": "https://upload.wikimedia.org/wikipedia/commons/8/86/ASICS_Corporation_logo.png"
+}
+
+
+### 8. New Balance
+POST {{baseUrl}}/api/brands
+Content-Type: application/json
+
+{
+"name": "New Balance",
+"description": "Equilibrio perfecto entre funcionalidad y moda urbana.",
+"website": "https://www.newbalance.com.ar/",
+"countryOfOrigin": "EEUU",
+"logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdbIeA9ab1_QXIxAJzfq1XC8wy_rFpNvaF_w&s"
+}
+
+### 9. Umbro
+POST {{baseUrl}}/api/brands
+Content-Type: application/json
+
+{
+"name": "Umbro",
+"description": "La marca del doble diamante, puro corazón futbolero.",
+"website": "https://www.umbro.com.ar/",
+"countryOfOrigin": "Brasil",
+"logo": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Logo_Umbro.png"
+}

@@ -62,13 +62,14 @@ Content-Type: application/json
 ### 11. Fernando
 POST http://localhost:3000/api/distributors
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwidXNlck5hbWUiOiJMZW9BYnVpbjI5Iiwicm9sIjoiQ2xpZW50ZSIsIm1haWwiOiJsZW9uZWxhYnVpbjIwMDJAZ21haWwuY29tIiwiaWF0IjoxNzczOTQ5MzcxLCJleHAiOjE3NzM5NTI5NzF9.1flhI8SqA3cNjVfBZbIG_7NwPrwdQoLhANcQBbnCGoc
 
 {
-  "CUIL": 2040123871,
+  "CUIL": 2040777871,
   "name": "Fernando",
   "surname": "Gago",
-  "email": "fgago.logistica@gmail.com",
-  "phoneNumber": "1122334455",
+  "email": "fgago.logit@gmail.com",
+  "phoneNumber": "1177734455",
   "address": "Av. Libertador 5000, CABA"
 }
 
