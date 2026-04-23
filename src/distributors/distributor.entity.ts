@@ -7,7 +7,7 @@ import { Product } from "../products/product.entity.js";
 @Entity()
 export class Distributor extends BaseEntity{
 
-    @Property()
+    @Property({ type: 'bigint' })
     @Unique()
     CUIL!: Number
 

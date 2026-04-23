@@ -4,7 +4,7 @@ const distributorSchema = z.object({
     CUIL: z.number()
     .int({ message: 'El CUIL debe ser un número entero' })
     .positive({ message: 'El CUIL debe ser un número positivo' })
-    .refine((val) => val.toString().length === 10, {
+    .refine((val) => val.toString().length === 11, {
       message: 'El CUIL debe tener exactamente 11 dígitos',
     }),
     name: z.string()
