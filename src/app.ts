@@ -21,8 +21,8 @@ const app = express()
 
 const allowedOrigins = [
   'http://localhost:4200', 
-  'https://proyecto-venta-productos-front-end-production.up.railway.app',
-  'https://proyecto-venta-productos-front-end-production.up.railway.app/' // Versión con barra
+  'https://proyecto-venta-productos-front-end-production-352f.up.railway.app',
+  'https://proyecto-venta-productos-front-end-production-352f.up.railway.app/'
 ];
 
 app.use(cors({
@@ -69,7 +69,7 @@ app.use((_, res) => {
 app.use(errorHandler)
 
 // SYNC SCHEMA (Solo para la primera vez o cambios de entidad)
-//await syncSchema() 
+await syncSchema() 
 
 // SEED DE PUBLICO (GENDERS)
 try {
