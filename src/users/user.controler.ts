@@ -131,7 +131,8 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
       { expiresIn: '24h' }
     );
 
-    const isProduction = process.env.NODE_ENV === 'production';
+    const origin = req.headers.origin || req.headers.referer || '';
+    const isProduction = process.env.NODE_ENV === 'production' || !!process.env.RAILWAY_ENVIRONMENT_NAME || !origin.includes('localhost');
 
     res.cookie('token', token, {
       httpOnly: true,
@@ -150,7 +151,9 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
 
 async function logOut(req: Request, res: Response, next: NextFunction) {
   try {
-    const isProduction = process.env.NODE_ENV === 'production';
+    const origin = req.headers.origin || req.headers.referer || '';
+    const isProduction = process.env.NODE_ENV === 'production' || !!process.env.RAILWAY_ENVIRONMENT_NAME || !origin.includes('localhost');
+
     res.clearCookie('token', {
       httpOnly: true,
       secure: isProduction,

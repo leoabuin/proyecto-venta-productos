@@ -18,6 +18,7 @@ import { errorHandler } from './shared/errorHandler.middleware.js'
 import { paymentRouter } from './payment/payment.routes.js'
 
 const app = express()
+app.set('trust proxy', 1)
 
 const allowedOrigins = [
   'http://localhost:4200', 
