@@ -16,6 +16,7 @@ import { commentRouter } from './comments/comment.routes.js'
 import { genderRouter } from './gender/gender.routes.js'
 import { errorHandler } from './shared/errorHandler.middleware.js'
 import { paymentRouter } from './payment/payment.routes.js'
+import { couponRouter } from './coupons/coupon.routes.js'
 
 const app = express()
 app.set('trust proxy', 1)
@@ -61,6 +62,7 @@ app.use('/api/distributors', distributorRouter)
 app.use('/api/comments', commentRouter)
 app.use('/api/genders', genderRouter)
 app.use('/api/payment', paymentRouter)
+app.use('/api/coupons', couponRouter)
 
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' })

@@ -135,13 +135,15 @@ async function placeOrder(req: Request, res: Response, next: NextFunction): Prom
       orderItem.quantity = item.quantity;
       
       // Aplicar descuento por cantidad (>= 3 unidades -> 20% de descuento)
+      // NOTA: item.item_price viene del frontend como (precio_unitario * cantidad),
+      // es decir, es el precio TOTAL del line-item. No se debe multiplicar por quantity de nuevo.
       let finalPrice = item.item_price;
       if (item.quantity >= 3) {
-        finalPrice = item.item_price * 0.8;
+        finalPrice = item.item_price * 0.8; // 20% OFF sobre el total del line-item
       }
       
       orderItem.item_price = finalPrice;
-      totalOrder += finalPrice * item.quantity;
+      totalOrder += finalPrice; // finalPrice ya es el total del line-item
 
       return orderItem
     })
@@ -188,7 +190,8 @@ async function placeOrder(req: Request, res: Response, next: NextFunction): Prom
 async function cancelOrder(req: Request, res: Response, next: NextFunction) {
   try {
     const idOrder = Number.parseInt(req.params.idOrder)
-    const order = await em.findOne(Order, idOrder, { populate: ['orderItems'] })
+    const forkedEm = em.fork()
+    const order = await forkedEm.findOne(Order, idOrder, { populate: ['orderItems', 'orderItems.product'] })
 
     if (!order) {
       return res.status(404).json({ message: `La orden con ID ${idOrder} no existe.` });
@@ -200,19 +203,16 @@ async function cancelOrder(req: Request, res: Response, next: NextFunction) {
 
     order.estado = 'Cancelado'
 
+    // Restaurar stock de TODOS los items (no retornar dentro del loop)
     for (const orderItem of order.orderItems.getItems()) {
-      const productId = orderItem.product?.id
-
-      if (productId) {
-        const product = await em.findOne(Product, productId);
-
-        if (product) {
-          product.stock += orderItem.quantity
-          await em.persistAndFlush(product)
-          return res.status(200).json({ message: `El pedido nro ${order.id} ha sido cancelado exitosamente.` })
-        }
+      const product = orderItem.product;
+      if (product && orderItem.quantity) {
+        product.stock += orderItem.quantity
       }
     }
+
+    await forkedEm.flush()
+    return res.status(200).json({ message: `El pedido nro ${order.id} ha sido cancelado exitosamente.` })
   } catch (error: any) {
     next(error)
   }
