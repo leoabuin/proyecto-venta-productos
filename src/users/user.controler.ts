@@ -28,7 +28,8 @@ const SECRET_KEY = process.env.JWT_SECRET || 'fallback_secret_for_dev_only';
 async function findAll(req: Request, res: Response, next: NextFunction) {
   try {
     const users = await em.find(User, {}, { populate: ['orders'] })
-    res.status(200).json({ message: 'found all Users', data: users })
+    const safeUsers = users.map(({ password: _, ...rest }) => rest)
+    res.status(200).json({ message: 'found all Users', data: safeUsers })
   } catch (error: any) {
     next(error)
   }
@@ -38,7 +39,8 @@ async function findOne(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number.parseInt(req.params.id)
     const user = await em.findOneOrFail(User, { id }, { populate: ['orders'] })
-    res.status(200).json({ message: 'found User', data: user })
+    const { password: _, ...safeUser } = user
+    res.status(200).json({ message: 'found User', data: safeUser })
   } catch (error: any) {
     next(error)
   }
@@ -75,9 +77,14 @@ async function update(req: Request, res: Response, next: NextFunction) {
         return res.status(400).json({ error: JSON.parse(userUpdate.error.message) })
       }
     }
-    em.assign(user, req.body)
+    const updateData = { ...req.body }
+    if (updateData.password) {
+      updateData.password = bcrypt.hashSync(updateData.password, 10)
+    }
+    em.assign(user, updateData)
     await em.flush()
-    res.status(200).json({ message: 'user updated', data: user })
+    const { password: _, ...safeUser } = user
+    res.status(200).json({ message: 'user updated', data: safeUser })
   } catch (error: any) {
     next(error)
   }
