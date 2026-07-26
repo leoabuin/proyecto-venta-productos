@@ -36,7 +36,6 @@ export class User extends BaseEntity {
   userName?: string
 
   @Property({nullable: false})
-  @Unique()
   password?: string
 
   @OneToMany(()=> Order, order => order.user, {cascade: [Cascade.ALL]})

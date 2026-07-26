@@ -112,7 +112,7 @@ async function placeOrder(req: Request, res: Response, next: NextFunction): Prom
 
     let totalOrder = 0;
     const orderItemPromise = orderItems.map(async (item: any) => {
-      const product = await em.findOne(Product, { id: item.productId });
+      const product = await em.findOne(Product, { id: item.productId }, { populate: ['prices'] });
       if (!product) {
         throw new Error(`Producto con id ${item.productId} no encontrado`);
       }
@@ -134,12 +134,23 @@ async function placeOrder(req: Request, res: Response, next: NextFunction): Prom
       orderItem.product = product;
       orderItem.quantity = item.quantity;
       
+      // Obtener el precio vigente del producto desde la BD
+      const now = new Date();
+      const currentPrice = product.prices.getItems().find((price: any) => {
+        return price.dateFrom <= now && (!price.dateUntil || price.dateUntil >= now);
+      });
+
+      if (!currentPrice) {
+        throw new Error(`No hay precio vigente para el producto ${product.name}`);
+      }
+
+      // Calcular el precio correcto: precio unitario * cantidad
+      const correctPrice = currentPrice.cost * item.quantity;
+      
       // Aplicar descuento por cantidad (>= 3 unidades -> 20% de descuento)
-      // NOTA: item.item_price viene del frontend como (precio_unitario * cantidad),
-      // es decir, es el precio TOTAL del line-item. No se debe multiplicar por quantity de nuevo.
-      let finalPrice = item.item_price;
+      let finalPrice = correctPrice;
       if (item.quantity >= 3) {
-        finalPrice = item.item_price * 0.8; // 20% OFF sobre el total del line-item
+        finalPrice = correctPrice * 0.8; // 20% OFF sobre el total del line-item
       }
       
       orderItem.item_price = finalPrice;
