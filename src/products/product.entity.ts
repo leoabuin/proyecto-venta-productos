@@ -1,6 +1,4 @@
-import { orm } from '../shared/orm.js'
-import { Entity,PrimaryKey,Property,OneToMany, Cascade, Collection, Rel, ManyToOne } from '@mikro-orm/core'
-import crypto from 'node:crypto'
+import { Entity,Property,OneToMany, Cascade, Collection, Rel, ManyToOne } from '@mikro-orm/core'
 import { Price } from './price.entity.js'
 import { BaseEntity } from '../shared/baseEntity.entity.js'
 import { Brand } from '../brands/brand.entity.js'
@@ -13,8 +11,6 @@ import { Gender } from '../gender/gender.entity.js'
 @Entity()
 export class Product extends BaseEntity {
 
-    @PrimaryKey()
-    id?: number
 
     @Property({nullable:false})
     name!: string
