@@ -92,7 +92,7 @@ async function remove(req: Request, res: Response, next: NextFunction) {
 
 async function placeOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const userId = Number(req.body.userId)
+    const userId = Number((req as any).user.id)
     const { orderItems, couponCode } = req.body.sanitizedOrderInput
     const user = await em.findOne(User, { id: userId })
     if (!user) {
@@ -190,11 +190,19 @@ async function placeOrder(req: Request, res: Response, next: NextFunction): Prom
 async function cancelOrder(req: Request, res: Response, next: NextFunction) {
   try {
     const idOrder = Number.parseInt(req.params.idOrder)
+    const requestingUserId = Number((req as any).user.id)
+    const requestingUserRol = (req as any).user.rol
     const forkedEm = em.fork()
-    const order = await forkedEm.findOne(Order, idOrder, { populate: ['orderItems', 'orderItems.product'] })
+    const order = await forkedEm.findOne(Order, idOrder, { populate: ['orderItems', 'orderItems.product', 'user'] })
 
     if (!order) {
       return res.status(404).json({ message: `La orden con ID ${idOrder} no existe.` });
+    }
+
+    const isOwner = (order.user as any).id === requestingUserId
+    const isStaff = requestingUserRol === 'Empleado' || requestingUserRol === 'admin'
+    if (!isOwner && !isStaff) {
+      return res.status(403).json({ message: 'No tenés permiso para cancelar esta orden.' });
     }
 
     if (order.estado !== 'pending') {
