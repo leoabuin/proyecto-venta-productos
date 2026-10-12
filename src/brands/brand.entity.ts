@@ -1,13 +1,11 @@
-import { orm } from "../shared/orm.js";
-import { Entity,Property,PrimaryKey,OneToMany, Collection, Unique } from "@mikro-orm/core";
+import { Entity,Property,OneToMany, Collection, Unique } from "@mikro-orm/core";
 import { BaseEntity } from "../shared/baseEntity.entity.js";
 import { Product } from "../products/product.entity.js";
 
 
 @Entity()
 export class Brand extends BaseEntity{
-    @PrimaryKey()
-    id?: number
+
 
     @Property({nullable:false})
     @Unique()
